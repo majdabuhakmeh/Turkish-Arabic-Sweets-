@@ -299,9 +299,18 @@ export const upsertFood = createServerFn({ method: "POST" })
       is_available: data.is_available,
       is_featured: data.is_featured,
     };
-    const q = data.id
-      ? supabaseAdmin.from("foods").update(payload).eq("id", data.id)
-      : supabaseAdmin.from("foods").insert(payload);
+    let q;
+    if (data.id) {
+      q = supabaseAdmin.from("foods").update(payload).eq("id", data.id);
+    } else {
+      const { data: r } = await supabaseAdmin
+        .from("restaurants")
+        .select("id")
+        .eq("slug", "royal-sweets")
+        .maybeSingle();
+      if (!r) throw new Error("Default restaurant not found");
+      q = supabaseAdmin.from("foods").insert({ ...payload, restaurant_id: r.id });
+    }
     const { error } = await q;
     if (error) throw new Error(error.message);
     return { ok: true };
