@@ -213,20 +213,26 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 const STORAGE_KEY = "royalsweets.locale";
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window === "undefined") return "en";
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    return stored === "ar" ? "ar" : "en";
-  });
+  const [locale, setLocaleState] = useState<Locale>("en");
+  const [hydrated, setHydrated] = useState(false);
+
+  // Hydrate from localStorage after mount to avoid SSR/client mismatch
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (stored === "ar" || stored === "en") setLocaleState(stored);
+    } catch {}
+    setHydrated(true);
+  }, []);
 
   const dir: "ltr" | "rtl" = locale === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
-    if (typeof document === "undefined") return;
+    if (typeof document === "undefined" || !hydrated) return;
     document.documentElement.lang = locale;
     document.documentElement.dir = dir;
-    window.localStorage.setItem(STORAGE_KEY, locale);
-  }, [locale, dir]);
+    try { window.localStorage.setItem(STORAGE_KEY, locale); } catch {}
+  }, [locale, dir, hydrated]);
 
   const setLocale = (l: Locale) => setLocaleState(l);
 
