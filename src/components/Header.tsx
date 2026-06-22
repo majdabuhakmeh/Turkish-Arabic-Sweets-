@@ -8,6 +8,7 @@ import { useAuth } from "@/context/auth";
 import { useI18n, useT } from "@/context/i18n";
 import { getIsAdmin } from "@/lib/admin.functions";
 import { RoyalLogo } from "@/components/RoyalLogo";
+import { BranchSwitcher } from "@/components/BranchSwitcher";
 
 const links = [
   { to: "/", key: "nav.home" },
@@ -61,6 +62,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <div className="hidden md:block"><BranchSwitcher /></div>
           <button
             onClick={() => setLocale(locale === "ar" ? "en" : "ar")}
             className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border px-3 h-11 text-sm hover:border-foreground transition-colors"

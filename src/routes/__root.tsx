@@ -13,6 +13,7 @@ import { CartProvider } from "@/context/cart";
 import { AuthProvider } from "@/context/auth";
 import { I18nProvider } from "@/context/i18n";
 import { FavoritesProvider } from "@/context/favorites";
+import { BranchProvider } from "@/context/branch";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -139,6 +140,7 @@ function RootComponent() {
       <I18nProvider>
         <AuthProvider>
           <FavoritesProvider>
+          <BranchProvider>
           <CartProvider>
             <div className="min-h-screen flex flex-col">
               <Header />
@@ -149,6 +151,7 @@ function RootComponent() {
             </div>
             <Toaster />
           </CartProvider>
+          </BranchProvider>
           </FavoritesProvider>
         </AuthProvider>
       </I18nProvider>
