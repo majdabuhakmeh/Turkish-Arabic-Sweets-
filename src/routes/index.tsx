@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Clock, Flame, Leaf, Star } from "lucide-react";
-import heroImg from "@/assets/hero.jpg";
+import { ArrowRight, Clock, Sparkles, Leaf, Star } from "lucide-react";
+import heroAsset from "@/assets/sweet-kunafa-cream.jpg.asset.json";
+import floatAsset from "@/assets/sweet-baklava-pistachio.jpg.asset.json";
 import { foods, categories, localizedCategoryName } from "@/lib/foods";
 import { FoodCard } from "@/components/FoodCard";
 import { useI18n, useT } from "@/context/i18n";
@@ -8,13 +9,18 @@ import { useI18n, useT } from "@/context/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Royal Sweets — Wood-fired food, delivered" },
+      { title: "Royal Sweets — حلويات الملكي · Handcrafted Levantine sweets" },
       {
         name: "description",
         content:
-          "Order from Royal Sweets — wood-fired pies, smash burgers, hand-cut pasta and slow-braised classics delivered in under 30 minutes.",
+          "Royal Sweets — Al-Sumou's family confectionery for handcrafted baklava, kunafa and Levantine pastries. Boxed with care, delivered fresh.",
       },
+      { property: "og:title", content: "Royal Sweets — حلويات الملكي" },
+      { property: "og:description", content: "Handcrafted baklava, kunafa & Levantine pastries from Al-Sumou. Boxed with care, delivered fresh." },
+      { property: "og:image", content: heroAsset.url },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
 });
@@ -31,7 +37,7 @@ function Home() {
       <section className="relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-6 pt-12 pb-24 lg:pt-20 lg:pb-32 grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 relative z-10">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-card px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-primary">
               <span className="size-1.5 rounded-full bg-primary animate-pulse" />
               {t("header.openNow")}
             </span>
@@ -48,7 +54,7 @@ function Home() {
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 to="/menu"
-                className="group inline-flex items-center gap-3 rounded-full bg-primary text-primary-foreground px-7 h-14 text-base font-medium shadow-warm hover:bg-primary/90 transition-all"
+                className="group inline-flex items-center gap-3 rounded-full gradient-warm text-primary-foreground px-7 h-14 text-base font-medium shadow-warm hover:opacity-95 transition-all"
               >
                 {t("home.orderNow")}
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1 rtl:rotate-180" />
@@ -64,7 +70,7 @@ function Home() {
             <div className="mt-14 grid grid-cols-3 gap-6 max-w-md">
               {[
                 { icon: Clock, label: t("home.feature.delivery") },
-                { icon: Flame, label: t("home.feature.fire") },
+                { icon: Sparkles, label: t("home.feature.fire") },
                 { icon: Leaf, label: t("home.feature.local") },
               ].map((s) => (
                 <div key={s.label} className="text-sm">
@@ -78,17 +84,18 @@ function Home() {
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-square rounded-[2.5rem] overflow-hidden shadow-warm">
               <img
-                src={heroImg}
-                alt="Wood-fired margherita pizza with burrata"
+                src={heroAsset.url}
+                alt="Royal Sweets kunafa garnished with pistachio"
                 width={1600}
-                height={1280}
+                height={1600}
                 className="size-full object-cover"
+                loading="eager"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
             </div>
             {/* Floating rating card */}
-            <div className="absolute -left-4 bottom-8 lg:-left-12 rtl:left-auto rtl:right-4 rtl:lg:right-[-3rem] bg-card rounded-2xl p-5 shadow-soft max-w-[220px]">
-              <div className="flex items-center gap-1 text-secondary">
+            <div className="absolute -left-4 bottom-8 lg:-left-12 rtl:left-auto rtl:right-4 rtl:lg:right-[-3rem] bg-card rounded-2xl p-5 shadow-soft max-w-[220px] border border-border">
+              <div className="flex items-center gap-1 text-primary">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="size-4 fill-current" />
                 ))}
@@ -98,18 +105,23 @@ function Home() {
               </p>
               <p className="mt-2 text-xs text-muted-foreground">{t("home.reviewBy")}</p>
             </div>
-            {/* Floating order card */}
-            <div className="hidden md:block absolute -right-4 top-10 rtl:right-auto rtl:-left-4 bg-card rounded-2xl p-5 shadow-soft">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                {t("home.todaysSpecial")}
+            {/* Floating special card */}
+            <div className="hidden md:block absolute -right-4 top-10 rtl:right-auto rtl:-left-4 bg-card rounded-2xl p-3 shadow-soft border border-border">
+              <div className="flex items-center gap-3">
+                <img src={floatAsset.url} alt="" className="size-14 rounded-xl object-cover" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {t("home.todaysSpecial")}
+                  </div>
+                  <div className="font-display text-xl leading-tight">{t("home.specialOffer")}</div>
+                </div>
               </div>
-              <div className="font-display text-2xl mt-1">{t("home.specialOffer")}</div>
             </div>
           </div>
         </div>
-        {/* decorative gradient blob */}
+        {/* decorative gold blobs */}
         <div className="pointer-events-none absolute -top-40 -right-40 size-[600px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-40 -left-40 size-[500px] rounded-full bg-secondary/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-40 -left-40 size-[500px] rounded-full bg-primary/15 blur-3xl" />
       </section>
 
       {/* CATEGORIES */}
@@ -165,7 +177,7 @@ function Home() {
       </section>
 
       {/* CTA STRIP */}
-      <section className="mx-auto max-w-7xl px-6">
+      <section className="mx-auto max-w-7xl px-6 pb-24">
         <div className="relative overflow-hidden rounded-[2.5rem] gradient-warm p-12 lg:p-20 text-primary-foreground">
           <div className="relative z-10 max-w-2xl">
             <h2 className="font-display text-5xl lg:text-6xl leading-tight">

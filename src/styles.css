@@ -4,9 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Royal Sweets / حلويات الملكي — design system
+ * Premium dessert boutique. Gold, cream, charcoal.
+ */
+
 @theme inline {
-  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
-  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", "Amiri", ui-serif, Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-arabic: "Amiri", "Tajawal", ui-serif, serif;
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -33,114 +38,135 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-warning: var(--warning);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-cream: var(--cream);
   --color-charcoal: var(--charcoal);
   --color-gold: var(--gold);
+  --color-pistachio: var(--pistachio);
 }
 
 :root {
-  --radius: 0.875rem;
-  /* Brand palette in oklch */
-  --background: oklch(0.985 0.012 60);          /* #FFF7F2 cream */
-  --foreground: oklch(0.18 0.01 60);             /* #1F1F1F charcoal */
-  --cream: oklch(0.985 0.012 60);
-  --charcoal: oklch(0.18 0.01 60);
-  --gold: oklch(0.83 0.13 80);                   /* #FFC857 */
+  --radius: 1rem;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.01 60);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.01 60);
+  /* Royal Sweets brand palette */
+  --cream:      oklch(0.985 0.012 85);     /* #FBF7EE — page cream */
+  --charcoal:   oklch(0.16 0.005 60);      /* #18181B — deep charcoal */
+  --gold:       oklch(0.76 0.13 78);       /* #C9A24C — royal gold */
+  --gold-deep:  oklch(0.62 0.13 70);       /* #8C6B2A — burnished gold */
+  --pistachio:  oklch(0.78 0.13 130);      /* #A8C66C — accent for pistachio garnish */
+  --rose:       oklch(0.78 0.09 25);       /* #D29B91 — soft rose */
 
-  --primary: oklch(0.7 0.19 40);                 /* #FF6B35 */
-  --primary-foreground: oklch(0.99 0 0);
+  --background: var(--cream);
+  --foreground: var(--charcoal);
 
-  --secondary: oklch(0.83 0.13 80);              /* gold */
-  --secondary-foreground: oklch(0.18 0.01 60);
+  --card:                  oklch(1 0 0);
+  --card-foreground:       var(--charcoal);
+  --popover:               oklch(1 0 0);
+  --popover-foreground:    var(--charcoal);
 
-  --muted: oklch(0.95 0.012 60);
-  --muted-foreground: oklch(0.45 0.02 60);
+  --primary:               var(--gold);
+  --primary-foreground:    oklch(0.14 0.005 60);
 
-  --accent: oklch(0.93 0.04 60);
-  --accent-foreground: oklch(0.18 0.01 60);
+  --secondary:             var(--charcoal);
+  --secondary-foreground:  var(--cream);
 
-  --destructive: oklch(0.6 0.22 25);             /* #E63946 */
+  --muted:                 oklch(0.96 0.012 85);
+  --muted-foreground:      oklch(0.45 0.012 70);
+
+  --accent:                oklch(0.93 0.035 80);
+  --accent-foreground:     var(--charcoal);
+
+  --destructive:           oklch(0.58 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --success: oklch(0.65 0.16 145);               /* #4CAF50 */
+  --success:               oklch(0.65 0.16 145);
+  --warning:               oklch(0.80 0.16 70);
 
-  --border: oklch(0.9 0.012 60);
-  --input: oklch(0.9 0.012 60);
-  --ring: oklch(0.7 0.19 40);
+  --border:                oklch(0.90 0.018 80);
+  --input:                 oklch(0.90 0.018 80);
+  --ring:                  var(--gold);
+
+  /* Brand effects */
+  --shadow-soft:   0 8px 32px -12px color-mix(in oklab, var(--charcoal) 14%, transparent);
+  --shadow-warm:   0 24px 60px -28px color-mix(in oklab, var(--gold-deep) 55%, transparent);
+  --shadow-luxe:   0 30px 80px -30px color-mix(in oklab, var(--charcoal) 30%, transparent);
+  --gradient-gold: linear-gradient(135deg, oklch(0.82 0.13 80), oklch(0.70 0.14 70));
+  --gradient-warm: linear-gradient(135deg, oklch(0.82 0.13 80), oklch(0.62 0.13 70));
+  --gradient-cream: linear-gradient(180deg, oklch(0.99 0.008 85), oklch(0.965 0.018 80));
 }
 
 .dark {
-  --background: oklch(0.18 0.01 60);
-  --foreground: oklch(0.97 0.01 60);
-  --card: oklch(0.22 0.012 60);
-  --card-foreground: oklch(0.97 0.01 60);
-  --popover: oklch(0.22 0.012 60);
-  --popover-foreground: oklch(0.97 0.01 60);
-  --primary: oklch(0.72 0.19 40);
-  --primary-foreground: oklch(0.12 0 0);
-  --secondary: oklch(0.83 0.13 80);
-  --secondary-foreground: oklch(0.18 0 0);
-  --muted: oklch(0.28 0.012 60);
-  --muted-foreground: oklch(0.7 0.02 60);
-  --accent: oklch(0.32 0.04 60);
-  --accent-foreground: oklch(0.97 0 0);
-  --destructive: oklch(0.65 0.22 25);
+  --background: oklch(0.16 0.006 60);
+  --foreground: oklch(0.97 0.012 85);
+
+  --card:                  oklch(0.21 0.008 60);
+  --card-foreground:       oklch(0.97 0.012 85);
+  --popover:               oklch(0.21 0.008 60);
+  --popover-foreground:    oklch(0.97 0.012 85);
+
+  --primary:               oklch(0.80 0.14 80);
+  --primary-foreground:    oklch(0.14 0.005 60);
+
+  --secondary:             oklch(0.97 0.012 85);
+  --secondary-foreground:  oklch(0.14 0.005 60);
+
+  --muted:                 oklch(0.26 0.008 60);
+  --muted-foreground:      oklch(0.72 0.012 70);
+
+  --accent:                oklch(0.30 0.04 70);
+  --accent-foreground:     oklch(0.97 0.012 85);
+
+  --destructive:           oklch(0.65 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.32 0.012 60);
-  --input: oklch(0.32 0.012 60);
-  --ring: oklch(0.72 0.19 40);
+
+  --border:                oklch(0.32 0.012 70);
+  --input:                 oklch(0.32 0.012 70);
+  --ring:                  oklch(0.80 0.14 80);
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  * {
+    border-color: var(--color-border);
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, .font-display {
-    font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-  }
-  /* Arabic: switch to Arabic-suitable fonts and natural letter-spacing */
   html[dir="rtl"] body {
-    font-family: "Tajawal", "Work Sans", ui-sans-serif, system-ui, sans-serif;
-  }
-  html[dir="rtl"] h1,
-  html[dir="rtl"] h2,
-  html[dir="rtl"] h3,
-  html[dir="rtl"] .font-display {
     font-family: var(--font-arabic);
-    letter-spacing: 0;
+  }
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  /* Decorative gold rule */
+  .gold-rule {
+    background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+    height: 1px;
   }
 }
 
-@layer utilities {
-  .text-balance { text-wrap: balance; }
-  .bg-grain {
-    background-image:
-      radial-gradient(oklch(0 0 0 / 0.03) 1px, transparent 1px);
-    background-size: 4px 4px;
-  }
-  .shadow-soft {
-    box-shadow: 0 1px 2px oklch(0 0 0 / 0.04),
-                0 10px 30px -10px oklch(0.18 0.01 60 / 0.12);
-  }
-  .shadow-warm {
-    box-shadow: 0 20px 60px -20px oklch(0.7 0.19 40 / 0.35);
-  }
-  .gradient-warm {
-    background: linear-gradient(135deg, oklch(0.7 0.19 40), oklch(0.83 0.13 80));
-  }
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+@utility shadow-warm {
+  box-shadow: var(--shadow-warm);
+}
+@utility shadow-luxe {
+  box-shadow: var(--shadow-luxe);
+}
+@utility gradient-warm {
+  background-image: var(--gradient-warm);
+}
+@utility gradient-gold {
+  background-image: var(--gradient-gold);
+}
+@utility gradient-cream {
+  background-image: var(--gradient-cream);
 }

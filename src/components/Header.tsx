@@ -7,6 +7,7 @@ import { useCart } from "@/context/cart";
 import { useAuth } from "@/context/auth";
 import { useI18n, useT } from "@/context/i18n";
 import { getIsAdmin } from "@/lib/admin.functions";
+import { RoyalLogo } from "@/components/RoyalLogo";
 
 const links = [
   { to: "/", key: "nav.home" },
@@ -29,16 +30,18 @@ export function Header() {
   });
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-border/60">
+    <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-6 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="size-9 rounded-full gradient-warm grid place-items-center text-primary-foreground font-display text-lg">
-            S
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="size-11 rounded-full bg-foreground grid place-items-center text-primary shadow-soft">
+            <RoyalLogo size={26} />
           </div>
           <div className="leading-tight">
-            <div className="font-display text-2xl">{locale === "ar" ? "زعفران" : "Saffron"}</div>
-            <div className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground -mt-1">
-              {locale === "ar" ? "مطبخ" : "Kitchen"}
+            <div className="font-display text-2xl tracking-tight">
+              {locale === "ar" ? "حلويات الملكي" : "Royal Sweets"}
+            </div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-primary -mt-0.5">
+              {locale === "ar" ? "السموع" : "Al-Sumou"}
             </div>
           </div>
         </Link>
