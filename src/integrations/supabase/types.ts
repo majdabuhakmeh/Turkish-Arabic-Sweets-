@@ -225,6 +225,38 @@ export type Database = {
           },
         ]
       }
+      order_status_events: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          order_id: string
+          status: Database["public"]["Enums"]["order_status"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          order_id: string
+          status: Database["public"]["Enums"]["order_status"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          order_id?: string
+          status?: Database["public"]["Enums"]["order_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_events_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       orders: {
         Row: {
           coupon_code: string | null
@@ -236,6 +268,7 @@ export type Database = {
           delivery_notes: string | null
           delivery_phone: string
           discount: number
+          estimated_delivery_at: string | null
           id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           status: Database["public"]["Enums"]["order_status"]
@@ -255,6 +288,7 @@ export type Database = {
           delivery_notes?: string | null
           delivery_phone: string
           discount?: number
+          estimated_delivery_at?: string | null
           id?: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           status?: Database["public"]["Enums"]["order_status"]
@@ -274,6 +308,7 @@ export type Database = {
           delivery_notes?: string | null
           delivery_phone?: string
           discount?: number
+          estimated_delivery_at?: string | null
           id?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
           status?: Database["public"]["Enums"]["order_status"]
@@ -289,6 +324,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          default_address: string | null
           full_name: string | null
           id: string
           phone: string | null
@@ -297,6 +333,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          default_address?: string | null
           full_name?: string | null
           id: string
           phone?: string | null
@@ -305,6 +342,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          default_address?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
