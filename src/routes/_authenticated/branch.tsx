@@ -41,7 +41,7 @@ function BranchManagerLayout() {
             const active = n.exact ? path === n.to : path.startsWith(n.to);
             const Icon = n.icon;
             return (
-              <Link key={n.to} to={n.to} className={`flex items-center gap-2 rounded-md px-3 h-10 text-sm transition-colors ${active ? "bg-foreground text-background" : "text-foreground/80 hover:bg-muted"}`}>
+              <Link key={n.to} to={n.to as "/"} className={`flex items-center gap-2 rounded-md px-3 h-10 text-sm transition-colors ${active ? "bg-foreground text-background" : "text-foreground/80 hover:bg-muted"}`}>
                 <Icon className="size-4" />{n.label}
               </Link>
             );

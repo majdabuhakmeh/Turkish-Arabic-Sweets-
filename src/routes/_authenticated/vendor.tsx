@@ -42,7 +42,7 @@ function VendorLayout() {
             return (
               <Link
                 key={n.to}
-                to={n.to}
+                to={n.to as "/"}
                 className={`flex items-center gap-2 rounded-md px-3 h-10 text-sm transition-colors ${
                   active ? "bg-foreground text-background" : "text-foreground/80 hover:bg-muted"
                 }`}
