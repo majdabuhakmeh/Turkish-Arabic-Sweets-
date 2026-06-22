@@ -7,10 +7,15 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { CartProvider } from "@/context/cart";
+import { AuthProvider } from "@/context/auth";
+import { I18nProvider } from "@/context/i18n";
+import { FavoritesProvider } from "@/context/favorites";
+import { Toaster } from "@/components/ui/sonner";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 function NotFoundComponent() {
   return (
@@ -37,9 +42,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,16 +79,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Saffron Kitchen — Wood-fired food, delivered" },
+      { name: "description", content: "A neighborhood kitchen serving wood-fired pies, smash burgers and slow-braised classics — delivered in under 30 minutes." },
+      { name: "author", content: "Saffron Kitchen" },
+      { property: "og:title", content: "Saffron Kitchen — Wood-fired food, delivered" },
+      { property: "og:description", content: "A neighborhood kitchen serving wood-fired pies, smash burgers and slow-braised classics — delivered in under 30 minutes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Saffron Kitchen — Wood-fired food, delivered" },
+      { name: "twitter:description", content: "A neighborhood kitchen serving wood-fired pies, smash burgers and slow-braised classics — delivered in under 30 minutes." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b91600da-d633-424f-9107-9d71754ce60f/id-preview-c8dfbace--b2f967ef-f589-4c74-b37a-ad030855b9f3.lovable.app-1781944835671.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b91600da-d633-424f-9107-9d71754ce60f/id-preview-c8dfbace--b2f967ef-f589-4c74-b37a-ad030855b9f3.lovable.app-1781944835671.png" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700&display=swap",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -99,7 +111,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
+function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -118,8 +130,22 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <I18nProvider>
+        <AuthProvider>
+          <FavoritesProvider>
+          <CartProvider>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-1">
+                <Outlet />
+              </main>
+              <Footer />
+            </div>
+            <Toaster />
+          </CartProvider>
+          </FavoritesProvider>
+        </AuthProvider>
+      </I18nProvider>
     </QueryClientProvider>
   );
 }
