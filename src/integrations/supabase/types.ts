@@ -14,12 +14,170 @@ export type Database = {
   }
   public: {
     Tables: {
+      branch_inventory: {
+        Row: {
+          available: boolean
+          branch_id: string
+          created_at: string
+          food_id: string
+          id: string
+          price_override: number | null
+          stock: number | null
+          updated_at: string
+        }
+        Insert: {
+          available?: boolean
+          branch_id: string
+          created_at?: string
+          food_id: string
+          id?: string
+          price_override?: number | null
+          stock?: number | null
+          updated_at?: string
+        }
+        Update: {
+          available?: boolean
+          branch_id?: string
+          created_at?: string
+          food_id?: string
+          id?: string
+          price_override?: number | null
+          stock?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branch_inventory_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "branch_inventory_food_id_fkey"
+            columns: ["food_id"]
+            isOneToOne: false
+            referencedRelation: "foods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      branch_staff: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["branch_staff_role"]
+          user_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["branch_staff_role"]
+          user_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["branch_staff_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branch_staff_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      branches: {
+        Row: {
+          address: string | null
+          city: string | null
+          code: string
+          country: string | null
+          created_at: string
+          delivery_fee: number
+          delivery_radius_km: number
+          eta_minutes: number
+          i18n: Json
+          id: string
+          latitude: number | null
+          longitude: number | null
+          manager_id: string | null
+          min_order: number
+          name: string
+          opening_hours: Json
+          phone: string | null
+          restaurant_id: string
+          status: Database["public"]["Enums"]["branch_status"]
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          code: string
+          country?: string | null
+          created_at?: string
+          delivery_fee?: number
+          delivery_radius_km?: number
+          eta_minutes?: number
+          i18n?: Json
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          manager_id?: string | null
+          min_order?: number
+          name: string
+          opening_hours?: Json
+          phone?: string | null
+          restaurant_id: string
+          status?: Database["public"]["Enums"]["branch_status"]
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          code?: string
+          country?: string | null
+          created_at?: string
+          delivery_fee?: number
+          delivery_radius_km?: number
+          eta_minutes?: number
+          i18n?: Json
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          manager_id?: string | null
+          min_order?: number
+          name?: string
+          opening_hours?: Json
+          phone?: string | null
+          restaurant_id?: string
+          status?: Database["public"]["Enums"]["branch_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branches_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           created_at: string
           id: string
           image_url: string | null
           name: string
+          restaurant_id: string | null
           slug: string
           sort_order: number
           updated_at: string
@@ -29,6 +187,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           name: string
+          restaurant_id?: string | null
           slug: string
           sort_order?: number
           updated_at?: string
@@ -38,11 +197,20 @@ export type Database = {
           id?: string
           image_url?: string | null
           name?: string
+          restaurant_id?: string | null
           slug?: string
           sort_order?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       coupons: {
         Row: {
@@ -56,6 +224,7 @@ export type Database = {
           id: string
           max_discount: number | null
           min_subtotal: number
+          restaurant_id: string | null
           starts_at: string | null
           updated_at: string
           usage_limit: number | null
@@ -72,6 +241,7 @@ export type Database = {
           id?: string
           max_discount?: number | null
           min_subtotal?: number
+          restaurant_id?: string | null
           starts_at?: string | null
           updated_at?: string
           usage_limit?: number | null
@@ -88,12 +258,71 @@ export type Database = {
           id?: string
           max_discount?: number | null
           min_subtotal?: number
+          restaurant_id?: string | null
           starts_at?: string | null
           updated_at?: string
           usage_limit?: number | null
           used_count?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "coupons_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delivery_zones: {
+        Row: {
+          active: boolean
+          branch_id: string
+          created_at: string
+          eta_minutes: number
+          fee: number
+          id: string
+          min_subtotal: number
+          name: string
+          polygon: Json | null
+          radius_km: number | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          branch_id: string
+          created_at?: string
+          eta_minutes?: number
+          fee?: number
+          id?: string
+          min_subtotal?: number
+          name: string
+          polygon?: Json | null
+          radius_km?: number | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          branch_id?: string
+          created_at?: string
+          eta_minutes?: number
+          fee?: number
+          id?: string
+          min_subtotal?: number
+          name?: string
+          polygon?: Json | null
+          radius_km?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delivery_zones_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       favorites: {
         Row: {
@@ -135,6 +364,7 @@ export type Database = {
           is_featured: boolean
           name: string
           price: number
+          restaurant_id: string
           slug: string
           updated_at: string
         }
@@ -148,6 +378,7 @@ export type Database = {
           is_featured?: boolean
           name: string
           price: number
+          restaurant_id: string
           slug: string
           updated_at?: string
         }
@@ -161,6 +392,7 @@ export type Database = {
           is_featured?: boolean
           name?: string
           price?: number
+          restaurant_id?: string
           slug?: string
           updated_at?: string
         }
@@ -171,6 +403,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "categories"
             referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "foods_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -259,6 +498,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          branch_id: string | null
           coupon_code: string | null
           created_at: string
           delivery_address: string
@@ -271,6 +511,7 @@ export type Database = {
           estimated_delivery_at: string | null
           id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          restaurant_id: string | null
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
           tax: number
@@ -279,6 +520,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          branch_id?: string | null
           coupon_code?: string | null
           created_at?: string
           delivery_address: string
@@ -291,6 +533,7 @@ export type Database = {
           estimated_delivery_at?: string | null
           id?: string
           payment_method: Database["public"]["Enums"]["payment_method"]
+          restaurant_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           subtotal: number
           tax?: number
@@ -299,6 +542,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          branch_id?: string | null
           coupon_code?: string | null
           created_at?: string
           delivery_address?: string
@@ -311,6 +555,7 @@ export type Database = {
           estimated_delivery_at?: string | null
           id?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
+          restaurant_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
           tax?: number
@@ -318,7 +563,22 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            isOneToOne: false
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -346,6 +606,60 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      restaurants: {
+        Row: {
+          business_hours: Json
+          contact_email: string | null
+          contact_phone: string | null
+          cover_url: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          i18n: Json
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string | null
+          slug: string
+          status: Database["public"]["Enums"]["restaurant_status"]
+          updated_at: string
+        }
+        Insert: {
+          business_hours?: Json
+          contact_email?: string | null
+          contact_phone?: string | null
+          cover_url?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          i18n?: Json
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_id?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["restaurant_status"]
+          updated_at?: string
+        }
+        Update: {
+          business_hours?: Json
+          contact_email?: string | null
+          contact_phone?: string | null
+          cover_url?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          i18n?: Json
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["restaurant_status"]
           updated_at?: string
         }
         Relationships: []
@@ -446,6 +760,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_branch_manager: {
+        Args: { _branch: string; _user: string }
+        Returns: boolean
+      }
+      is_branch_staff: {
+        Args: { _branch: string; _user: string }
+        Returns: boolean
+      }
+      is_restaurant_member: {
+        Args: { _restaurant: string; _user: string }
+        Returns: boolean
+      }
+      is_restaurant_owner: {
+        Args: { _restaurant: string; _user: string }
+        Returns: boolean
+      }
       preview_coupon: {
         Args: { _code: string; _subtotal: number }
         Returns: {
@@ -492,7 +822,15 @@ export type Database = {
         | "manage_categories"
         | "view_reports"
         | "manage_users"
-      app_role: "admin" | "moderator" | "user"
+      app_role:
+        | "admin"
+        | "moderator"
+        | "user"
+        | "restaurant_owner"
+        | "branch_manager"
+        | "staff"
+      branch_staff_role: "manager" | "staff"
+      branch_status: "pending" | "active" | "inactive"
       coupon_discount_type: "percent" | "fixed"
       order_status:
         | "placed"
@@ -501,6 +839,7 @@ export type Database = {
         | "delivered"
         | "cancelled"
       payment_method: "card" | "cash"
+      restaurant_status: "pending" | "active" | "inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -635,7 +974,16 @@ export const Constants = {
         "view_reports",
         "manage_users",
       ],
-      app_role: ["admin", "moderator", "user"],
+      app_role: [
+        "admin",
+        "moderator",
+        "user",
+        "restaurant_owner",
+        "branch_manager",
+        "staff",
+      ],
+      branch_staff_role: ["manager", "staff"],
+      branch_status: ["pending", "active", "inactive"],
       coupon_discount_type: ["percent", "fixed"],
       order_status: [
         "placed",
@@ -645,6 +993,7 @@ export const Constants = {
         "cancelled",
       ],
       payment_method: ["card", "cash"],
+      restaurant_status: ["pending", "active", "inactive"],
     },
   },
 } as const
