@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, ShoppingBag, UtensilsCrossed, Tags, BarChart3, Users, Ticket, Loader2 } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, UtensilsCrossed, Tags, BarChart3, Users, Ticket, Loader2, Building2, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { bootstrapAdmin, getIsAdmin } from "@/lib/admin.functions";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/restaurants", label: "Restaurants", icon: Store },
+  { to: "/admin/branches", label: "Branches", icon: Building2 },
   { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
   { to: "/admin/foods", label: "Foods", icon: UtensilsCrossed },
