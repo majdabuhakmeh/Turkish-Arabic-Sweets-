@@ -233,11 +233,13 @@ export const getMyBranches = createServerFn({ method: "GET" })
         .select("branch:branches(*, restaurant:restaurants(name,slug))")
         .eq("user_id", context.userId),
     ]);
-    const map = new Map<string, unknown>();
-    (managed ?? []).forEach((b) => map.set(b.id, b));
-    (staff ?? []).forEach((s) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const b: any = s.branch;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const map = new Map<string, any>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (managed ?? []).forEach((b: any) => map.set(b.id, b));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (staff ?? []).forEach((s: any) => {
+      const b = s.branch;
       if (b?.id) map.set(b.id, b);
     });
     return Array.from(map.values());
