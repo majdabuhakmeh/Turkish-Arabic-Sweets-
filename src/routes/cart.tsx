@@ -5,7 +5,7 @@ import { useI18n, useT } from "@/context/i18n";
 import { localizedFood } from "@/lib/foods";
 
 export const Route = createFileRoute("/cart")({
-  head: () => ({ meta: [{ title: "Your Bag — Saffron Kitchen" }] }),
+  head: () => ({ meta: [{ title: "Your Bag — Royal Sweets" }] }),
   component: CartPage,
 });
 

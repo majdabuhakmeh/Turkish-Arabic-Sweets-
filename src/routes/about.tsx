@@ -4,8 +4,8 @@ import heroImg from "@/assets/hero.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "Our Story — Saffron Kitchen" },
-      { name: "description", content: "Saffron Kitchen is a neighborhood restaurant obsessed with wood-fired flavor, hand-cut pasta, and produce from local growers." },
+      { title: "Our Story — Royal Sweets" },
+      { name: "description", content: "Royal Sweets is a neighborhood restaurant obsessed with wood-fired flavor, hand-cut pasta, and produce from local growers." },
     ],
   }),
   component: AboutPage,
@@ -27,7 +27,7 @@ function AboutPage() {
       </section>
       <section className="mx-auto max-w-6xl px-6">
         <div className="aspect-[16/9] rounded-[2.5rem] overflow-hidden shadow-warm">
-          <img src={heroImg} alt="Inside the Saffron Kitchen" className="size-full object-cover" />
+          <img src={heroImg} alt="Inside the Royal Sweets" className="size-full object-cover" />
         </div>
       </section>
       <section className="mx-auto max-w-3xl px-6 py-24 space-y-8 text-lg leading-relaxed text-foreground/85">

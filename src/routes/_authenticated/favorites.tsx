@@ -6,7 +6,7 @@ import { useFavorites } from "@/context/favorites";
 import { useT } from "@/context/i18n";
 
 export const Route = createFileRoute("/_authenticated/favorites")({
-  head: () => ({ meta: [{ title: "Your favorites — Saffron Kitchen" }] }),
+  head: () => ({ meta: [{ title: "Your favorites — Royal Sweets" }] }),
   component: FavoritesPage,
 });
 

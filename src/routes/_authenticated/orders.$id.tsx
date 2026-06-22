@@ -42,7 +42,7 @@ const steps = [
 ] as const;
 
 export const Route = createFileRoute("/_authenticated/orders/$id")({
-  head: () => ({ meta: [{ title: "Order — Saffron Kitchen" }] }),
+  head: () => ({ meta: [{ title: "Order — Royal Sweets" }] }),
   component: OrderDetail,
 });
 

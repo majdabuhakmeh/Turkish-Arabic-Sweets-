@@ -8,11 +8,11 @@ import { useI18n, useT } from "@/context/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Saffron Kitchen — Wood-fired food, delivered" },
+      { title: "Royal Sweets — Wood-fired food, delivered" },
       {
         name: "description",
         content:
-          "Order from Saffron Kitchen — wood-fired pies, smash burgers, hand-cut pasta and slow-braised classics delivered in under 30 minutes.",
+          "Order from Royal Sweets — wood-fired pies, smash burgers, hand-cut pasta and slow-braised classics delivered in under 30 minutes.",
       },
     ],
   }),
@@ -172,7 +172,7 @@ function Home() {
               {t("home.ctaTitle")}
             </h2>
             <p className="mt-4 text-lg text-primary-foreground/90">
-              {t("home.ctaBody1")} <span className="font-semibold">SAFFRON20</span> {t("home.ctaBody2")}
+              {t("home.ctaBody1")} <span className="font-semibold">ROYAL20</span> {t("home.ctaBody2")}
             </p>
             <Link
               to="/menu"

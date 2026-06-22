@@ -13,7 +13,7 @@ export const Route = createFileRoute("/menu")({
   }),
   head: () => ({
     meta: [
-      { title: "Menu — Saffron Kitchen" },
+      { title: "Menu — Royal Sweets" },
       { name: "description", content: "Browse our full menu of wood-fired pizzas, smash burgers, hand-cut pasta, shawarma, salads and desserts." },
     ],
   }),

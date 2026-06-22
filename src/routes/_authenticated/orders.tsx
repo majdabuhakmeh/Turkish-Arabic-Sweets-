@@ -13,7 +13,7 @@ type Order = {
 };
 
 export const Route = createFileRoute("/_authenticated/orders")({
-  head: () => ({ meta: [{ title: "Your orders — Saffron Kitchen" }] }),
+  head: () => ({ meta: [{ title: "Your orders — Royal Sweets" }] }),
   component: OrdersPage,
 });
 

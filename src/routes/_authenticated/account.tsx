@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Loader2, LogOut } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/account")({
-  head: () => ({ meta: [{ title: "Your account — Saffron Kitchen" }] }),
+  head: () => ({ meta: [{ title: "Your account — Royal Sweets" }] }),
   component: AccountPage,
 });
 

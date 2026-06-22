@@ -15,7 +15,7 @@ export const Route = createFileRoute("/food/$id")({
     loaderData
       ? {
           meta: [
-            { title: `${loaderData.food.name} — Saffron Kitchen` },
+            { title: `${loaderData.food.name} — Royal Sweets` },
             { name: "description", content: loaderData.food.description },
             { property: "og:image", content: loaderData.food.image },
           ],

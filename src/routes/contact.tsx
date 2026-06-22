@@ -4,8 +4,8 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Saffron Kitchen" },
-      { name: "description", content: "Visit, call or email Saffron Kitchen. We're open daily 11am to 11pm." },
+      { title: "Contact — Royal Sweets" },
+      { name: "description", content: "Visit, call or email Royal Sweets. We're open daily 11am to 11pm." },
     ],
   }),
   component: ContactPage,
@@ -22,7 +22,7 @@ function ContactPage() {
           {[
             { icon: MapPin, title: "Visit", body: "221 Oak Street\nSan Francisco, CA 94102" },
             { icon: Phone, title: "Call", body: "+1 (415) 555-0142" },
-            { icon: Mail, title: "Email", body: "hello@saffronkitchen.com" },
+            { icon: Mail, title: "Email", body: "hello@royalsweets.com" },
             { icon: Clock, title: "Hours", body: "Open daily, 11am – 11pm" },
           ].map((b) => (
             <div key={b.title} className="flex gap-4">

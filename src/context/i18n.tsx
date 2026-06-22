@@ -92,7 +92,7 @@ const en: Dict = {
   "cart.checkout": "Checkout",
   "cart.addMore": "Add more dishes",
   // footer
-  "footer.brand": "Saffron Kitchen",
+  "footer.brand": "Royal Sweets",
   "footer.about":
     "A neighborhood kitchen serving wood-fired pies, smash burgers and slow-braised classics — delivered to your door in under 30 minutes.",
   "footer.visit": "Visit",
@@ -208,7 +208,7 @@ type I18nContextValue = {
 
 const I18nContext = createContext<I18nContextValue | null>(null);
 
-const STORAGE_KEY = "saffron.locale";
+const STORAGE_KEY = "royalsweets.locale";
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(() => {
