@@ -35,7 +35,8 @@ function AdminBranches() {
   });
 
   const saveMut = useMutation({
-    mutationFn: (input: Parameters<typeof save>[0]["data"]) => save({ data: input }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutationFn: (input: any) => save({ data: input }),
     onSuccess: () => { toast.success("Saved"); qc.invalidateQueries({ queryKey: ["admin-branches"] }); setOpen(false); setEditing(null); },
     onError: (e: Error) => toast.error(e.message),
   });

@@ -27,7 +27,8 @@ function AdminRestaurants() {
   const { data, isLoading } = useQuery({ queryKey: ["admin-restaurants"], queryFn: () => list() });
 
   const saveMut = useMutation({
-    mutationFn: (input: Parameters<typeof save>[0]["data"]) => save({ data: input }),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutationFn: (input: any) => save({ data: input }),
     onSuccess: () => {
       toast.success("Saved");
       qc.invalidateQueries({ queryKey: ["admin-restaurants"] });
