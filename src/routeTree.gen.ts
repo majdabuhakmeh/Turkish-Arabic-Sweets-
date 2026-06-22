@@ -20,12 +20,21 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FoodIdRouteImport } from './routes/food.$id'
+import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedFavoritesRouteImport } from './routes/_authenticated/favorites'
+import { Route as AuthenticatedBranchRouteImport } from './routes/_authenticated/branch'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedVendorIndexRouteImport } from './routes/_authenticated/vendor.index'
+import { Route as AuthenticatedBranchIndexRouteImport } from './routes/_authenticated/branch.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedVendorBranchesRouteImport } from './routes/_authenticated/vendor.branches'
+import { Route as AuthenticatedVendorAnalyticsRouteImport } from './routes/_authenticated/vendor.analytics'
 import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated/orders.$id'
+import { Route as AuthenticatedBranchReportsRouteImport } from './routes/_authenticated/branch.reports'
+import { Route as AuthenticatedBranchOrdersRouteImport } from './routes/_authenticated/branch.orders'
+import { Route as AuthenticatedBranchInventoryRouteImport } from './routes/_authenticated/branch.inventory'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminRestaurantsRouteImport } from './routes/_authenticated/admin.restaurants'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
@@ -89,6 +98,11 @@ const FoodIdRoute = FoodIdRouteImport.update({
   path: '/food/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedVendorRoute = AuthenticatedVendorRouteImport.update({
+  id: '/vendor',
+  path: '/vendor',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   id: '/orders',
   path: '/orders',
@@ -97,6 +111,11 @@ const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
 const AuthenticatedFavoritesRoute = AuthenticatedFavoritesRouteImport.update({
   id: '/favorites',
   path: '/favorites',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedBranchRoute = AuthenticatedBranchRouteImport.update({
+  id: '/branch',
+  path: '/branch',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -109,16 +128,58 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedVendorIndexRoute =
+  AuthenticatedVendorIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
+const AuthenticatedBranchIndexRoute =
+  AuthenticatedBranchIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedBranchRoute,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedVendorBranchesRoute =
+  AuthenticatedVendorBranchesRouteImport.update({
+    id: '/branches',
+    path: '/branches',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
+const AuthenticatedVendorAnalyticsRoute =
+  AuthenticatedVendorAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
 const AuthenticatedOrdersIdRoute = AuthenticatedOrdersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => AuthenticatedOrdersRoute,
 } as any)
+const AuthenticatedBranchReportsRoute =
+  AuthenticatedBranchReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedBranchRoute,
+  } as any)
+const AuthenticatedBranchOrdersRoute =
+  AuthenticatedBranchOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedBranchRoute,
+  } as any)
+const AuthenticatedBranchInventoryRoute =
+  AuthenticatedBranchInventoryRouteImport.update({
+    id: '/inventory',
+    path: '/inventory',
+    getParentRoute: () => AuthenticatedBranchRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -178,8 +239,10 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/account': typeof AuthenticatedAccountRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/branch': typeof AuthenticatedBranchRouteWithChildren
   '/favorites': typeof AuthenticatedFavoritesRoute
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
+  '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/food/$id': typeof FoodIdRoute
   '/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
@@ -189,8 +252,15 @@ export interface FileRoutesByFullPath {
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/restaurants': typeof AuthenticatedAdminRestaurantsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/branch/inventory': typeof AuthenticatedBranchInventoryRoute
+  '/branch/orders': typeof AuthenticatedBranchOrdersRoute
+  '/branch/reports': typeof AuthenticatedBranchReportsRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/vendor/analytics': typeof AuthenticatedVendorAnalyticsRoute
+  '/vendor/branches': typeof AuthenticatedVendorBranchesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/branch/': typeof AuthenticatedBranchIndexRoute
+  '/vendor/': typeof AuthenticatedVendorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -214,8 +284,15 @@ export interface FileRoutesByTo {
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/restaurants': typeof AuthenticatedAdminRestaurantsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/branch/inventory': typeof AuthenticatedBranchInventoryRoute
+  '/branch/orders': typeof AuthenticatedBranchOrdersRoute
+  '/branch/reports': typeof AuthenticatedBranchReportsRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/vendor/analytics': typeof AuthenticatedVendorAnalyticsRoute
+  '/vendor/branches': typeof AuthenticatedVendorBranchesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/branch': typeof AuthenticatedBranchIndexRoute
+  '/vendor': typeof AuthenticatedVendorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -231,8 +308,10 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/branch': typeof AuthenticatedBranchRouteWithChildren
   '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
   '/_authenticated/orders': typeof AuthenticatedOrdersRouteWithChildren
+  '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/food/$id': typeof FoodIdRoute
   '/_authenticated/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
@@ -242,8 +321,15 @@ export interface FileRoutesById {
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/restaurants': typeof AuthenticatedAdminRestaurantsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/branch/inventory': typeof AuthenticatedBranchInventoryRoute
+  '/_authenticated/branch/orders': typeof AuthenticatedBranchOrdersRoute
+  '/_authenticated/branch/reports': typeof AuthenticatedBranchReportsRoute
   '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
+  '/_authenticated/vendor/analytics': typeof AuthenticatedVendorAnalyticsRoute
+  '/_authenticated/vendor/branches': typeof AuthenticatedVendorBranchesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/branch/': typeof AuthenticatedBranchIndexRoute
+  '/_authenticated/vendor/': typeof AuthenticatedVendorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -259,8 +345,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/account'
     | '/admin'
+    | '/branch'
     | '/favorites'
     | '/orders'
+    | '/vendor'
     | '/food/$id'
     | '/admin/branches'
     | '/admin/categories'
@@ -270,8 +358,15 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/restaurants'
     | '/admin/users'
+    | '/branch/inventory'
+    | '/branch/orders'
+    | '/branch/reports'
     | '/orders/$id'
+    | '/vendor/analytics'
+    | '/vendor/branches'
     | '/admin/'
+    | '/branch/'
+    | '/vendor/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -295,8 +390,15 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/restaurants'
     | '/admin/users'
+    | '/branch/inventory'
+    | '/branch/orders'
+    | '/branch/reports'
     | '/orders/$id'
+    | '/vendor/analytics'
+    | '/vendor/branches'
     | '/admin'
+    | '/branch'
+    | '/vendor'
   id:
     | '__root__'
     | '/'
@@ -311,8 +413,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/account'
     | '/_authenticated/admin'
+    | '/_authenticated/branch'
     | '/_authenticated/favorites'
     | '/_authenticated/orders'
+    | '/_authenticated/vendor'
     | '/food/$id'
     | '/_authenticated/admin/branches'
     | '/_authenticated/admin/categories'
@@ -322,8 +426,15 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/restaurants'
     | '/_authenticated/admin/users'
+    | '/_authenticated/branch/inventory'
+    | '/_authenticated/branch/orders'
+    | '/_authenticated/branch/reports'
     | '/_authenticated/orders/$id'
+    | '/_authenticated/vendor/analytics'
+    | '/_authenticated/vendor/branches'
     | '/_authenticated/admin/'
+    | '/_authenticated/branch/'
+    | '/_authenticated/vendor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -419,6 +530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FoodIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/vendor': {
+      id: '/_authenticated/vendor'
+      path: '/vendor'
+      fullPath: '/vendor'
+      preLoaderRoute: typeof AuthenticatedVendorRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/orders': {
       id: '/_authenticated/orders'
       path: '/orders'
@@ -431,6 +549,13 @@ declare module '@tanstack/react-router' {
       path: '/favorites'
       fullPath: '/favorites'
       preLoaderRoute: typeof AuthenticatedFavoritesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/branch': {
+      id: '/_authenticated/branch'
+      path: '/branch'
+      fullPath: '/branch'
+      preLoaderRoute: typeof AuthenticatedBranchRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin': {
@@ -447,6 +572,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/vendor/': {
+      id: '/_authenticated/vendor/'
+      path: '/'
+      fullPath: '/vendor/'
+      preLoaderRoute: typeof AuthenticatedVendorIndexRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
+    '/_authenticated/branch/': {
+      id: '/_authenticated/branch/'
+      path: '/'
+      fullPath: '/branch/'
+      preLoaderRoute: typeof AuthenticatedBranchIndexRouteImport
+      parentRoute: typeof AuthenticatedBranchRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -454,12 +593,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/vendor/branches': {
+      id: '/_authenticated/vendor/branches'
+      path: '/branches'
+      fullPath: '/vendor/branches'
+      preLoaderRoute: typeof AuthenticatedVendorBranchesRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
+    '/_authenticated/vendor/analytics': {
+      id: '/_authenticated/vendor/analytics'
+      path: '/analytics'
+      fullPath: '/vendor/analytics'
+      preLoaderRoute: typeof AuthenticatedVendorAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
     '/_authenticated/orders/$id': {
       id: '/_authenticated/orders/$id'
       path: '/$id'
       fullPath: '/orders/$id'
       preLoaderRoute: typeof AuthenticatedOrdersIdRouteImport
       parentRoute: typeof AuthenticatedOrdersRoute
+    }
+    '/_authenticated/branch/reports': {
+      id: '/_authenticated/branch/reports'
+      path: '/reports'
+      fullPath: '/branch/reports'
+      preLoaderRoute: typeof AuthenticatedBranchReportsRouteImport
+      parentRoute: typeof AuthenticatedBranchRoute
+    }
+    '/_authenticated/branch/orders': {
+      id: '/_authenticated/branch/orders'
+      path: '/orders'
+      fullPath: '/branch/orders'
+      preLoaderRoute: typeof AuthenticatedBranchOrdersRouteImport
+      parentRoute: typeof AuthenticatedBranchRoute
+    }
+    '/_authenticated/branch/inventory': {
+      id: '/_authenticated/branch/inventory'
+      path: '/inventory'
+      fullPath: '/branch/inventory'
+      preLoaderRoute: typeof AuthenticatedBranchInventoryRouteImport
+      parentRoute: typeof AuthenticatedBranchRoute
     }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
@@ -547,6 +721,23 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedBranchRouteChildren {
+  AuthenticatedBranchInventoryRoute: typeof AuthenticatedBranchInventoryRoute
+  AuthenticatedBranchOrdersRoute: typeof AuthenticatedBranchOrdersRoute
+  AuthenticatedBranchReportsRoute: typeof AuthenticatedBranchReportsRoute
+  AuthenticatedBranchIndexRoute: typeof AuthenticatedBranchIndexRoute
+}
+
+const AuthenticatedBranchRouteChildren: AuthenticatedBranchRouteChildren = {
+  AuthenticatedBranchInventoryRoute: AuthenticatedBranchInventoryRoute,
+  AuthenticatedBranchOrdersRoute: AuthenticatedBranchOrdersRoute,
+  AuthenticatedBranchReportsRoute: AuthenticatedBranchReportsRoute,
+  AuthenticatedBranchIndexRoute: AuthenticatedBranchIndexRoute,
+}
+
+const AuthenticatedBranchRouteWithChildren =
+  AuthenticatedBranchRoute._addFileChildren(AuthenticatedBranchRouteChildren)
+
 interface AuthenticatedOrdersRouteChildren {
   AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
 }
@@ -558,18 +749,37 @@ const AuthenticatedOrdersRouteChildren: AuthenticatedOrdersRouteChildren = {
 const AuthenticatedOrdersRouteWithChildren =
   AuthenticatedOrdersRoute._addFileChildren(AuthenticatedOrdersRouteChildren)
 
+interface AuthenticatedVendorRouteChildren {
+  AuthenticatedVendorAnalyticsRoute: typeof AuthenticatedVendorAnalyticsRoute
+  AuthenticatedVendorBranchesRoute: typeof AuthenticatedVendorBranchesRoute
+  AuthenticatedVendorIndexRoute: typeof AuthenticatedVendorIndexRoute
+}
+
+const AuthenticatedVendorRouteChildren: AuthenticatedVendorRouteChildren = {
+  AuthenticatedVendorAnalyticsRoute: AuthenticatedVendorAnalyticsRoute,
+  AuthenticatedVendorBranchesRoute: AuthenticatedVendorBranchesRoute,
+  AuthenticatedVendorIndexRoute: AuthenticatedVendorIndexRoute,
+}
+
+const AuthenticatedVendorRouteWithChildren =
+  AuthenticatedVendorRoute._addFileChildren(AuthenticatedVendorRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedBranchRoute: typeof AuthenticatedBranchRouteWithChildren
   AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRouteWithChildren
+  AuthenticatedVendorRoute: typeof AuthenticatedVendorRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedBranchRoute: AuthenticatedBranchRouteWithChildren,
   AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRouteWithChildren,
+  AuthenticatedVendorRoute: AuthenticatedVendorRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

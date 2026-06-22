@@ -8,11 +8,11 @@ export const Route = createFileRoute("/_authenticated/vendor")({
   component: VendorLayout,
 });
 
-const nav = [
+const nav: { to: string; label: string; icon: typeof Store; exact?: boolean }[] = [
   { to: "/vendor", label: "Overview", icon: Store, exact: true },
   { to: "/vendor/branches", label: "Branches", icon: Building2 },
   { to: "/vendor/analytics", label: "Analytics", icon: BarChart3 },
-] as const;
+];
 
 function VendorLayout() {
   const list = useServerFn(getMyRestaurants);

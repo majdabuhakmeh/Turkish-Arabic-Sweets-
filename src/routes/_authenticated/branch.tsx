@@ -8,12 +8,12 @@ export const Route = createFileRoute("/_authenticated/branch")({
   component: BranchManagerLayout,
 });
 
-const nav = [
+const nav: { to: string; label: string; icon: typeof Building2; exact?: boolean }[] = [
   { to: "/branch", label: "Branches", icon: Building2, exact: true },
   { to: "/branch/orders", label: "Orders", icon: ShoppingBag },
   { to: "/branch/inventory", label: "Inventory", icon: Package },
   { to: "/branch/reports", label: "Reports", icon: BarChart3 },
-] as const;
+];
 
 function BranchManagerLayout() {
   const list = useServerFn(getMyBranches);

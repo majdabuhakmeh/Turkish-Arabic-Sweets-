@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/admin/branches")({
   component: AdminBranches,
 });
 
-function AdminBranches() {
+export function AdminBranches() {
   const listR = useServerFn(getMyRestaurants);
   const listB = useServerFn(getBranchesForRestaurant);
   const save = useServerFn(upsertBranch);
