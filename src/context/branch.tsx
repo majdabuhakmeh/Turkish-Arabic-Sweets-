@@ -103,8 +103,45 @@ export function BranchProvider({ children }: { children: ReactNode }) {
     setDetecting(false);
   }, []);
 
+  const fetchInventory = useServerFn(getBranchInventoryBySlug);
+  const { data: inventory = {}, isSuccess: inventoryReady } = useQuery({
+    queryKey: ["branch-inventory", selected?.id],
+    queryFn: () => fetchInventory({ data: { branchId: selected!.id } }),
+    enabled: !!selected?.id,
+    staleTime: 30_000,
+  });
+
+  const helpers = useMemo(() => {
+    const isAvailable = (slug: string) => {
+      const e = inventory[slug];
+      // If we have no inventory row yet (e.g. still loading or branch never seeded
+      // this food), default to available so the storefront keeps working.
+      if (!e) return true;
+      if (!e.available) return false;
+      if (e.stock != null && e.stock <= 0) return false;
+      return true;
+    };
+    const effectivePrice = (slug: string, basePrice: number) => {
+      const o = inventory[slug]?.price_override;
+      return o != null ? o : basePrice;
+    };
+    return { isAvailable, effectivePrice };
+  }, [inventory]);
+
   return (
-    <Ctx.Provider value={{ branches, selected, selectBranch, detectLocation, detecting, located }}>
+    <Ctx.Provider
+      value={{
+        branches,
+        selected,
+        selectBranch,
+        detectLocation,
+        detecting,
+        located,
+        inventory,
+        inventoryReady,
+        ...helpers,
+      }}
+    >
       {children}
     </Ctx.Provider>
   );
