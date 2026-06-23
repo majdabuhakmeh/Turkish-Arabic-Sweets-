@@ -150,7 +150,7 @@ function CheckoutPage() {
             food_id: d.food.id,
             name: d.food.name,
             image_url: d.food.image,
-            unit_price: d.food.price,
+            unit_price: d.unitPrice,
             qty: d.qty,
           })),
           delivery: { name, phone, address, city, notes: notes || undefined },
