@@ -25,6 +25,7 @@ export const Route = createFileRoute("/checkout")({
 function CheckoutPage() {
   const { subtotal, count, detailed, clear } = useCart();
   const { user } = useAuth();
+  const { selected: branch } = useBranch();
   const navigate = useNavigate();
   const place = useServerFn(placeOrder);
   const checkCoupon = useServerFn(validateCoupon);
