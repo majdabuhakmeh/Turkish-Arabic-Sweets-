@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, MapPin, AlertCircle } from "lucide-react";
 import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { localizedFood } from "@/lib/foods";
+import { useBranch } from "@/context/branch";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Your Bag — Royal Sweets" }] }),
@@ -10,10 +11,11 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { detailed, setQty, remove, subtotal, count } = useCart();
+  const { detailed, setQty, remove, subtotal, count, hasUnavailable } = useCart();
   const t = useT();
   const { locale } = useI18n();
-  const delivery = subtotal > 0 ? 3.5 : 0;
+  const { selected } = useBranch();
+  const delivery = subtotal > 0 ? Number(selected?.delivery_fee ?? 3.5) : 0;
   const tax = subtotal * 0.08;
   const total = subtotal + delivery + tax;
 
