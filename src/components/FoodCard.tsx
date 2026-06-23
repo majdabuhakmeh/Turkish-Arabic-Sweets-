@@ -38,6 +38,13 @@ export function FoodCard({ food }: { food: Food }) {
               {t("card.save")} ${food.originalPrice - food.price}
             </div>
           )}
+          {!available && (
+            <div className="absolute inset-0 grid place-items-center bg-background/70 backdrop-blur-sm">
+              <span className="rounded-full bg-foreground text-background text-xs font-semibold tracking-wider uppercase px-4 py-2">
+                {selected ? `Sold out · ${selected.name}` : "Sold out"}
+              </span>
+            </div>
+          )}
           <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-background/90 backdrop-blur px-3 py-1.5 text-xs font-medium">
             <Star className="size-3 fill-secondary text-secondary" />
             {food.rating}
@@ -47,12 +54,12 @@ export function FoodCard({ food }: { food: Food }) {
           <div className="flex items-baseline justify-between gap-4">
             <h3 className="font-display text-2xl leading-tight">{l.name}</h3>
             <div className="text-right">
-              {food.originalPrice && (
-                <div className="text-xs text-muted-foreground line-through">
-                  ${food.originalPrice}
-                </div>
-              )}
-              <div className="font-display text-2xl text-primary">${food.price}</div>
+              {discounted ? (
+                <div className="text-xs text-muted-foreground line-through">${food.price}</div>
+              ) : food.originalPrice ? (
+                <div className="text-xs text-muted-foreground line-through">${food.originalPrice}</div>
+              ) : null}
+              <div className="font-display text-2xl text-primary">${price}</div>
             </div>
           </div>
           <p className="text-sm text-muted-foreground mt-1.5 line-clamp-1">{l.tagline}</p>
