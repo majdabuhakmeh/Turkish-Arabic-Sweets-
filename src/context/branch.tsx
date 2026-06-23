@@ -19,6 +19,12 @@ export type Branch = {
   in_range?: boolean;
 };
 
+export type BranchInventoryEntry = {
+  available: boolean;
+  price_override: number | null;
+  stock: number | null;
+};
+
 type BranchCtx = {
   branches: Branch[];
   selected: Branch | null;
@@ -26,6 +32,10 @@ type BranchCtx = {
   detectLocation: () => Promise<void>;
   detecting: boolean;
   located: { lat: number; lng: number } | null;
+  inventory: Record<string, BranchInventoryEntry>;
+  inventoryReady: boolean;
+  isAvailable: (slug: string) => boolean;
+  effectivePrice: (slug: string, basePrice: number) => number;
 };
 
 const Ctx = createContext<BranchCtx | null>(null);
