@@ -69,7 +69,7 @@ function CartPage() {
           {detailed.map(({ food, qty, lineTotal, unitPrice, available }) => {
             const l = localizedFood(food, locale);
             return (
-            <li key={food.id} className="py-6 flex gap-5">
+            <li key={food.id} className={`py-6 flex gap-5 ${available ? "" : "opacity-60"}`}>
               <Link
                 to="/food/$id"
                 params={{ id: food.id }}
@@ -89,6 +89,12 @@ function CartPage() {
                   <div>
                     <h3 className="font-display text-2xl leading-tight">{l.name}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{l.tagline}</p>
+                    <p className="text-xs text-muted-foreground mt-1">${unitPrice.toFixed(2)} each</p>
+                    {!available && (
+                      <p className="text-xs text-destructive mt-1 font-medium">
+                        Unavailable at this branch
+                      </p>
+                    )}
                   </div>
                   <div className="font-display text-xl text-primary">
                     ${lineTotal.toFixed(2)}
