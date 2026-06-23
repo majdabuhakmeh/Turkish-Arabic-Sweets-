@@ -1,7 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { listActiveBranches, findNearestBranches } from "@/lib/branches.functions";
+import { listActiveBranches, findNearestBranches, getBranchInventoryBySlug } from "@/lib/branches.functions";
 
 export type Branch = {
   id: string;
