@@ -89,8 +89,9 @@ export function FoodCard({ food }: { food: Food }) {
       </button>
       <button
         onClick={() => add(food.id)}
+        disabled={!available}
         aria-label={`${t("card.add")} ${l.name}`}
-        className="absolute bottom-5 right-5 size-12 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-warm hover:scale-110 active:scale-95 transition-transform"
+        className="absolute bottom-5 right-5 size-12 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-warm hover:scale-110 active:scale-95 transition-transform disabled:opacity-40 disabled:hover:scale-100 disabled:cursor-not-allowed"
       >
         <Plus className="size-5" />
       </button>
