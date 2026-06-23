@@ -4,14 +4,19 @@ import { localizedFood, type Food } from "@/lib/foods";
 import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { useFavorites } from "@/context/favorites";
+import { useBranch } from "@/context/branch";
 
 export function FoodCard({ food }: { food: Food }) {
   const { add } = useCart();
   const { locale } = useI18n();
   const t = useT();
   const { isFavorite, toggle } = useFavorites();
+  const { effectivePrice, isAvailable, selected } = useBranch();
   const fav = isFavorite(food.id);
   const l = localizedFood(food, locale);
+  const price = effectivePrice(food.id, food.price);
+  const available = isAvailable(food.id);
+  const discounted = price < food.price;
   return (
     <article className="group relative">
       <Link
