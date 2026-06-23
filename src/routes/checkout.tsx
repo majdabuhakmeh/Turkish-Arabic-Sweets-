@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { CreditCard, Wallet, Loader2, Tag, X, Check, AlertCircle, Clock } from "lucide-react";
 import { useCart } from "@/context/cart";
 import { useAuth } from "@/context/auth";
+import { useBranch } from "@/context/branch";
 import { useServerFn } from "@tanstack/react-start";
 import { placeOrder } from "@/lib/orders.functions";
 import { validateCoupon, previewCoupon, type CouponPreview } from "@/lib/coupons.functions";
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/checkout")({
 function CheckoutPage() {
   const { subtotal, count, detailed, clear } = useCart();
   const { user } = useAuth();
+  const { selected: branch } = useBranch();
   const navigate = useNavigate();
   const place = useServerFn(placeOrder);
   const checkCoupon = useServerFn(validateCoupon);
@@ -45,7 +47,7 @@ function CheckoutPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pending, setPending] = useState<{ code: string; discount: number } | null>(null);
 
-  const delivery = 3.5;
+  const delivery = Number(branch?.delivery_fee ?? 3.5);
   const taxRate = 0.08;
   const discount = coupon ? Math.min(coupon.discount, subtotal) : 0;
   const discounted = Math.max(0, subtotal - discount);
@@ -148,7 +150,7 @@ function CheckoutPage() {
             food_id: d.food.id,
             name: d.food.name,
             image_url: d.food.image,
-            unit_price: d.food.price,
+            unit_price: d.unitPrice,
             qty: d.qty,
           })),
           delivery: { name, phone, address, city, notes: notes || undefined },

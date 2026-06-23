@@ -1,7 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { foods, type Food } from "@/lib/foods";
+import { useBranch } from "@/context/branch";
 
 export type CartItem = { id: string; qty: number };
+
+type CartLine = {
+  food: Food;
+  qty: number;
+  unitPrice: number;
+  lineTotal: number;
+  available: boolean;
+};
 
 type CartCtx = {
   items: CartItem[];
@@ -11,7 +20,8 @@ type CartCtx = {
   clear: () => void;
   count: number;
   subtotal: number;
-  detailed: { food: Food; qty: number; lineTotal: number }[];
+  hasUnavailable: boolean;
+  detailed: CartLine[];
 };
 
 const Ctx = createContext<CartCtx | null>(null);
@@ -33,20 +43,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE, JSON.stringify(items));
   }, [items]);
 
+  const { effectivePrice, isAvailable } = useBranch();
+
   const api = useMemo<CartCtx>(() => {
-    const detailed = items
+    const detailed: CartLine[] = items
       .map((i) => {
         const food = foods.find((f) => f.id === i.id);
         if (!food) return null;
-        return { food, qty: i.qty, lineTotal: food.price * i.qty };
+        const unitPrice = effectivePrice(food.id, food.price);
+        return {
+          food,
+          qty: i.qty,
+          unitPrice,
+          lineTotal: unitPrice * i.qty,
+          available: isAvailable(food.id),
+        };
       })
-      .filter(Boolean) as { food: Food; qty: number; lineTotal: number }[];
+      .filter(Boolean) as CartLine[];
 
     return {
       items,
       detailed,
       count: items.reduce((a, b) => a + b.qty, 0),
-      subtotal: detailed.reduce((a, b) => a + b.lineTotal, 0),
+      subtotal: detailed.reduce((a, b) => (b.available ? a + b.lineTotal : a), 0),
+      hasUnavailable: detailed.some((d) => !d.available),
       add: (id, qty = 1) =>
         setItems((prev) => {
           const e = prev.find((p) => p.id === id);
@@ -62,7 +82,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         ),
       clear: () => setItems([]),
     };
-  }, [items]);
+  }, [items, effectivePrice, isAvailable]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

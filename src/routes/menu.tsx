@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { foods, categories, localizedCategoryName, localizedFood } from "@/lib/foods";
 import { FoodCard } from "@/components/FoodCard";
-import { Search as SearchIcon } from "lucide-react";
+import { Search as SearchIcon, MapPin } from "lucide-react";
 import { useI18n, useT } from "@/context/i18n";
+import { useBranch } from "@/context/branch";
 
 type SearchParams = { cat?: string };
 
@@ -26,10 +27,11 @@ function MenuPage() {
   const [q, setQ] = useState("");
   const t = useT();
   const { locale } = useI18n();
+  const { selected, isAvailable } = useBranch();
 
   const active = cat ?? "all";
-  const filtered = foods.filter(
-    (f) => {
+  const filtered = foods
+    .filter((f) => {
       const l = localizedFood(f, locale);
       const term = q.toLowerCase();
       return (
@@ -38,8 +40,8 @@ function MenuPage() {
           f.name.toLowerCase().includes(term) ||
           l.name.toLowerCase().includes(term))
       );
-    },
-  );
+    })
+    .sort((a, b) => Number(isAvailable(b.id)) - Number(isAvailable(a.id)));
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-16">
@@ -51,6 +53,14 @@ function MenuPage() {
         <p className="mt-6 text-lg text-muted-foreground">
           {t("menu.subtitle")}
         </p>
+        {selected && (
+          <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
+            <MapPin className="size-4 text-primary" />
+            <span className="text-muted-foreground">Showing menu for</span>
+            <span className="font-medium">{selected.name}</span>
+            {selected.city && <span className="text-muted-foreground">· {selected.city}</span>}
+          </div>
+        )}
       </div>
 
       <div className="mt-12 flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between">

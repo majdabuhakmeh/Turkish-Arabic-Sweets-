@@ -4,14 +4,19 @@ import { localizedFood, type Food } from "@/lib/foods";
 import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { useFavorites } from "@/context/favorites";
+import { useBranch } from "@/context/branch";
 
 export function FoodCard({ food }: { food: Food }) {
   const { add } = useCart();
   const { locale } = useI18n();
   const t = useT();
   const { isFavorite, toggle } = useFavorites();
+  const { effectivePrice, isAvailable, selected } = useBranch();
   const fav = isFavorite(food.id);
   const l = localizedFood(food, locale);
+  const price = effectivePrice(food.id, food.price);
+  const available = isAvailable(food.id);
+  const discounted = price < food.price;
   return (
     <article className="group relative">
       <Link
@@ -33,6 +38,13 @@ export function FoodCard({ food }: { food: Food }) {
               {t("card.save")} ${food.originalPrice - food.price}
             </div>
           )}
+          {!available && (
+            <div className="absolute inset-0 grid place-items-center bg-background/70 backdrop-blur-sm">
+              <span className="rounded-full bg-foreground text-background text-xs font-semibold tracking-wider uppercase px-4 py-2">
+                {selected ? `Sold out · ${selected.name}` : "Sold out"}
+              </span>
+            </div>
+          )}
           <div className="absolute top-4 right-4 flex items-center gap-1 rounded-full bg-background/90 backdrop-blur px-3 py-1.5 text-xs font-medium">
             <Star className="size-3 fill-secondary text-secondary" />
             {food.rating}
@@ -42,12 +54,12 @@ export function FoodCard({ food }: { food: Food }) {
           <div className="flex items-baseline justify-between gap-4">
             <h3 className="font-display text-2xl leading-tight">{l.name}</h3>
             <div className="text-right">
-              {food.originalPrice && (
-                <div className="text-xs text-muted-foreground line-through">
-                  ${food.originalPrice}
-                </div>
-              )}
-              <div className="font-display text-2xl text-primary">${food.price}</div>
+              {discounted ? (
+                <div className="text-xs text-muted-foreground line-through">${food.price}</div>
+              ) : food.originalPrice ? (
+                <div className="text-xs text-muted-foreground line-through">${food.originalPrice}</div>
+              ) : null}
+              <div className="font-display text-2xl text-primary">${price}</div>
             </div>
           </div>
           <p className="text-sm text-muted-foreground mt-1.5 line-clamp-1">{l.tagline}</p>
@@ -77,8 +89,9 @@ export function FoodCard({ food }: { food: Food }) {
       </button>
       <button
         onClick={() => add(food.id)}
+        disabled={!available}
         aria-label={`${t("card.add")} ${l.name}`}
-        className="absolute bottom-5 right-5 size-12 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-warm hover:scale-110 active:scale-95 transition-transform"
+        className="absolute bottom-5 right-5 size-12 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-warm hover:scale-110 active:scale-95 transition-transform disabled:opacity-40 disabled:hover:scale-100 disabled:cursor-not-allowed"
       >
         <Plus className="size-5" />
       </button>

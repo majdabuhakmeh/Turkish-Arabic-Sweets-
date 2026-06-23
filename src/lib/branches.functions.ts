@@ -107,3 +107,28 @@ export const getBranchMenu = createServerFn({ method: "GET" })
     if (!branch) throw new Error("Branch not found");
     return { branch, items: inv ?? [] };
   });
+
+/** Public: inventory map keyed by food slug for a single branch.
+ *  Includes unavailable items so the UI can grey them out instead of hiding.
+ */
+export const getBranchInventoryBySlug = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ branchId: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { data: rows, error } = await supabaseAdmin
+      .from("branch_inventory")
+      .select("available,price_override,stock, food:foods(slug)")
+      .eq("branch_id", data.branchId);
+    if (error) throw new Error(error.message);
+    const map: Record<string, { available: boolean; price_override: number | null; stock: number | null }> = {};
+    for (const r of rows ?? []) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const slug = (r as any).food?.slug as string | undefined;
+      if (!slug) continue;
+      map[slug] = {
+        available: !!r.available,
+        price_override: r.price_override == null ? null : Number(r.price_override),
+        stock: r.stock == null ? null : Number(r.stock),
+      };
+    }
+    return map;
+  });

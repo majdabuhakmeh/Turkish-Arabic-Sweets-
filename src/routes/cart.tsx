@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, MapPin, AlertCircle } from "lucide-react";
 import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { localizedFood } from "@/lib/foods";
+import { useBranch } from "@/context/branch";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Your Bag — Royal Sweets" }] }),
@@ -10,10 +11,11 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { detailed, setQty, remove, subtotal, count } = useCart();
+  const { detailed, setQty, remove, subtotal, count, hasUnavailable } = useCart();
   const t = useT();
   const { locale } = useI18n();
-  const delivery = subtotal > 0 ? 3.5 : 0;
+  const { selected } = useBranch();
+  const delivery = subtotal > 0 ? Number(selected?.delivery_fee ?? 3.5) : 0;
   const tax = subtotal * 0.08;
   const total = subtotal + delivery + tax;
 
@@ -42,12 +44,32 @@ function CartPage() {
       <h1 className="font-display text-6xl">{t("cart.title")}</h1>
       <p className="mt-2 text-muted-foreground">{count} {t("cart.itemsReady")}</p>
 
+      {selected && (
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
+          <MapPin className="size-4 text-primary" />
+          <span className="text-muted-foreground">Fulfilled by</span>
+          <span className="font-medium">{selected.name}</span>
+          {selected.eta_minutes && (
+            <span className="text-muted-foreground">· ~{selected.eta_minutes} min</span>
+          )}
+        </div>
+      )}
+
+      {hasUnavailable && (
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm">
+          <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
+          <p>
+            Some items aren&rsquo;t available at <strong>{selected?.name ?? "this branch"}</strong>. Remove them or switch branches to continue.
+          </p>
+        </div>
+      )}
+
       <div className="mt-12 grid lg:grid-cols-3 gap-12">
         <ul className="lg:col-span-2 divide-y divide-border">
-          {detailed.map(({ food, qty, lineTotal }) => {
+          {detailed.map(({ food, qty, lineTotal, unitPrice, available }) => {
             const l = localizedFood(food, locale);
             return (
-            <li key={food.id} className="py-6 flex gap-5">
+            <li key={food.id} className={`py-6 flex gap-5 ${available ? "" : "opacity-60"}`}>
               <Link
                 to="/food/$id"
                 params={{ id: food.id }}
@@ -67,6 +89,12 @@ function CartPage() {
                   <div>
                     <h3 className="font-display text-2xl leading-tight">{l.name}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{l.tagline}</p>
+                    <p className="text-xs text-muted-foreground mt-1">${unitPrice.toFixed(2)} each</p>
+                    {!available && (
+                      <p className="text-xs text-destructive mt-1 font-medium">
+                        Unavailable at this branch
+                      </p>
+                    )}
                   </div>
                   <div className="font-display text-xl text-primary">
                     ${lineTotal.toFixed(2)}
@@ -121,12 +149,21 @@ function CartPage() {
               <dd className="font-display text-3xl text-primary">${total.toFixed(2)}</dd>
             </div>
           </dl>
-          <Link
-            to="/checkout"
-            className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground h-14 font-medium shadow-warm hover:bg-primary/90 transition-colors"
-          >
-            {t("cart.checkout")} <ArrowRight className="size-4 rtl:rotate-180" />
-          </Link>
+          {hasUnavailable ? (
+            <button
+              disabled
+              className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-muted text-muted-foreground h-14 font-medium cursor-not-allowed"
+            >
+              Resolve unavailable items
+            </button>
+          ) : (
+            <Link
+              to="/checkout"
+              className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground h-14 font-medium shadow-warm hover:bg-primary/90 transition-colors"
+            >
+              {t("cart.checkout")} <ArrowRight className="size-4 rtl:rotate-180" />
+            </Link>
+          )}
           <Link
             to="/menu"
             className="mt-3 w-full inline-flex items-center justify-center h-12 text-sm text-muted-foreground hover:text-foreground"
