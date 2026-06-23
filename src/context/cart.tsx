@@ -1,7 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { foods, type Food } from "@/lib/foods";
+import { useBranch } from "@/context/branch";
 
 export type CartItem = { id: string; qty: number };
+
+type CartLine = {
+  food: Food;
+  qty: number;
+  unitPrice: number;
+  lineTotal: number;
+  available: boolean;
+};
 
 type CartCtx = {
   items: CartItem[];
@@ -11,7 +20,8 @@ type CartCtx = {
   clear: () => void;
   count: number;
   subtotal: number;
-  detailed: { food: Food; qty: number; lineTotal: number }[];
+  hasUnavailable: boolean;
+  detailed: CartLine[];
 };
 
 const Ctx = createContext<CartCtx | null>(null);
