@@ -44,9 +44,29 @@ function CartPage() {
       <h1 className="font-display text-6xl">{t("cart.title")}</h1>
       <p className="mt-2 text-muted-foreground">{count} {t("cart.itemsReady")}</p>
 
+      {selected && (
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
+          <MapPin className="size-4 text-primary" />
+          <span className="text-muted-foreground">Fulfilled by</span>
+          <span className="font-medium">{selected.name}</span>
+          {selected.eta_minutes && (
+            <span className="text-muted-foreground">· ~{selected.eta_minutes} min</span>
+          )}
+        </div>
+      )}
+
+      {hasUnavailable && (
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm">
+          <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
+          <p>
+            Some items aren&rsquo;t available at <strong>{selected?.name ?? "this branch"}</strong>. Remove them or switch branches to continue.
+          </p>
+        </div>
+      )}
+
       <div className="mt-12 grid lg:grid-cols-3 gap-12">
         <ul className="lg:col-span-2 divide-y divide-border">
-          {detailed.map(({ food, qty, lineTotal }) => {
+          {detailed.map(({ food, qty, lineTotal, unitPrice, available }) => {
             const l = localizedFood(food, locale);
             return (
             <li key={food.id} className="py-6 flex gap-5">
