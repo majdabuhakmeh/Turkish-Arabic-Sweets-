@@ -149,12 +149,21 @@ function CartPage() {
               <dd className="font-display text-3xl text-primary">${total.toFixed(2)}</dd>
             </div>
           </dl>
-          <Link
-            to="/checkout"
-            className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground h-14 font-medium shadow-warm hover:bg-primary/90 transition-colors"
-          >
-            {t("cart.checkout")} <ArrowRight className="size-4 rtl:rotate-180" />
-          </Link>
+          {hasUnavailable ? (
+            <button
+              disabled
+              className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-muted text-muted-foreground h-14 font-medium cursor-not-allowed"
+            >
+              Resolve unavailable items
+            </button>
+          ) : (
+            <Link
+              to="/checkout"
+              className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground h-14 font-medium shadow-warm hover:bg-primary/90 transition-colors"
+            >
+              {t("cart.checkout")} <ArrowRight className="size-4 rtl:rotate-180" />
+            </Link>
+          )}
           <Link
             to="/menu"
             className="mt-3 w-full inline-flex items-center justify-center h-12 text-sm text-muted-foreground hover:text-foreground"
