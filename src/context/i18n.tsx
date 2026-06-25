@@ -10,6 +10,7 @@ const en: Dict = {
   "nav.menu": "Sweets",
   "nav.about": "Our Story",
   "nav.contact": "Visit Us",
+  "nav.brands": "Brands",
   "nav.admin": "Admin",
   "nav.account": "Account",
   "nav.signin": "Sign in",
