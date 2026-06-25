@@ -19,6 +19,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RIndexRouteImport } from './routes/r.index'
+import { Route as RSlugRouteImport } from './routes/r.$slug'
 import { Route as FoodIdRouteImport } from './routes/food.$id'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
@@ -91,6 +93,16 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RIndexRoute = RIndexRouteImport.update({
+  id: '/r/',
+  path: '/r/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RSlugRoute = RSlugRouteImport.update({
+  id: '/r/$slug',
+  path: '/r/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FoodIdRoute = FoodIdRouteImport.update({
@@ -244,6 +256,8 @@ export interface FileRoutesByFullPath {
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/food/$id': typeof FoodIdRoute
+  '/r/$slug': typeof RSlugRoute
+  '/r/': typeof RIndexRoute
   '/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -276,6 +290,8 @@ export interface FileRoutesByTo {
   '/favorites': typeof AuthenticatedFavoritesRoute
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/food/$id': typeof FoodIdRoute
+  '/r/$slug': typeof RSlugRoute
+  '/r': typeof RIndexRoute
   '/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -313,6 +329,8 @@ export interface FileRoutesById {
   '/_authenticated/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/food/$id': typeof FoodIdRoute
+  '/r/$slug': typeof RSlugRoute
+  '/r/': typeof RIndexRoute
   '/_authenticated/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -350,6 +368,8 @@ export interface FileRouteTypes {
     | '/orders'
     | '/vendor'
     | '/food/$id'
+    | '/r/$slug'
+    | '/r/'
     | '/admin/branches'
     | '/admin/categories'
     | '/admin/coupons'
@@ -382,6 +402,8 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/orders'
     | '/food/$id'
+    | '/r/$slug'
+    | '/r'
     | '/admin/branches'
     | '/admin/categories'
     | '/admin/coupons'
@@ -418,6 +440,8 @@ export interface FileRouteTypes {
     | '/_authenticated/orders'
     | '/_authenticated/vendor'
     | '/food/$id'
+    | '/r/$slug'
+    | '/r/'
     | '/_authenticated/admin/branches'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/coupons'
@@ -449,6 +473,8 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   FoodIdRoute: typeof FoodIdRoute
+  RSlugRoute: typeof RSlugRoute
+  RIndexRoute: typeof RIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -521,6 +547,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/': {
+      id: '/r/'
+      path: '/r'
+      fullPath: '/r/'
+      preLoaderRoute: typeof RIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/$slug': {
+      id: '/r/$slug'
+      path: '/r/$slug'
+      fullPath: '/r/$slug'
+      preLoaderRoute: typeof RSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/food/$id': {
@@ -798,6 +838,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   FoodIdRoute: FoodIdRoute,
+  RSlugRoute: RSlugRoute,
+  RIndexRoute: RIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
