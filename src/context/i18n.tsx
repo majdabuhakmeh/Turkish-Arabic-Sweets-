@@ -112,6 +112,7 @@ const ar: Dict = {
   "nav.menu": "الحلويات",
   "nav.about": "قصتنا",
   "nav.contact": "زورنا",
+  "nav.brands": "العلامات",
   "nav.admin": "الإدارة",
   "nav.account": "حسابي",
   "nav.signin": "تسجيل الدخول",
