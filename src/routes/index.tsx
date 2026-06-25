@@ -124,7 +124,13 @@ function Home() {
         <div className="pointer-events-none absolute -bottom-40 -left-40 size-[500px] rounded-full bg-primary/15 blur-3xl" />
       </section>
 
+      {/* NEAREST BRANCH / ETA */}
+      <section className="mx-auto max-w-7xl px-6 -mt-6">
+        <NearestBranchBanner />
+      </section>
+
       {/* CATEGORIES */}
+
       <section className="mx-auto max-w-7xl px-6 py-12">
         <div className="flex items-end justify-between mb-8">
           <h2 className="font-display text-4xl lg:text-5xl">{t("home.browse")}</h2>
