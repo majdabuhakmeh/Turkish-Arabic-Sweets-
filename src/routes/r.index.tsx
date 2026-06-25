@@ -35,6 +35,12 @@ function RestaurantsIndex() {
         Browse dessert shops, bakeries, and sweet brands available on Royal Sweets.
       </p>
 
+      <div className="mt-10">
+        <NearestBranchBanner />
+      </div>
+
+
+
       {isLoading ? (
         <p className="mt-12 text-muted-foreground">Loading brands…</p>
       ) : (
