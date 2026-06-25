@@ -107,6 +107,13 @@ function RestaurantPage() {
           </div>
         )}
 
+        {/* Nearest branch + ETA */}
+        <div className="mt-10">
+          <NearestBranchBanner restaurantId={restaurant.id} />
+        </div>
+
+
+
         {/* Branches */}
         <div className="mt-16">
           <h2 className="font-display text-3xl lg:text-4xl">
