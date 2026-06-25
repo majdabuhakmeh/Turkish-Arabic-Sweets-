@@ -5,6 +5,7 @@ import floatAsset from "@/assets/sweet-baklava-pistachio.jpg.asset.json";
 import { foods, categories, localizedCategoryName } from "@/lib/foods";
 import { FoodCard } from "@/components/FoodCard";
 import { useI18n, useT } from "@/context/i18n";
+import { NearestBranchBanner } from "@/components/NearestBranchBanner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
