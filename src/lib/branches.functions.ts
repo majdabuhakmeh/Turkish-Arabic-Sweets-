@@ -15,6 +15,31 @@ export const listActiveRestaurants = createServerFn({ method: "GET" }).handler(
   },
 );
 
+/** Public: fetch a restaurant by slug with its active branches. */
+export const getRestaurantBySlug = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ slug: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    const { data: restaurant, error } = await supabaseAdmin
+      .from("restaurants")
+      .select(
+        "id,name,slug,description,logo_url,cover_url,currency,contact_phone,contact_email,status",
+      )
+      .eq("slug", data.slug)
+      .eq("status", "active")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!restaurant) return null;
+    const { data: branches } = await supabaseAdmin
+      .from("branches")
+      .select(
+        "id,restaurant_id,name,code,address,city,country,latitude,longitude,phone,delivery_radius_km,delivery_fee,min_order,eta_minutes,status",
+      )
+      .eq("restaurant_id", restaurant.id)
+      .eq("status", "active")
+      .order("name", { ascending: true });
+    return { restaurant, branches: branches ?? [] };
+  });
+
 /** Public: list active branches, optionally filtered by restaurant. */
 export const listActiveBranches = createServerFn({ method: "GET" })
   .inputValidator((d) =>
