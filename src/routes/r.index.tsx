@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listActiveRestaurants } from "@/lib/branches.functions";
 import { MapPin } from "lucide-react";
+import { NearestBranchBanner } from "@/components/NearestBranchBanner";
 
 export const Route = createFileRoute("/r/")({
   head: () => ({
