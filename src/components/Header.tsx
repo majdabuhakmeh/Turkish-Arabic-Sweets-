@@ -13,6 +13,7 @@ import { BranchSwitcher } from "@/components/BranchSwitcher";
 const links = [
   { to: "/", key: "nav.home" },
   { to: "/menu", key: "nav.menu" },
+  { to: "/r", key: "nav.brands" },
   { to: "/about", key: "nav.about" },
   { to: "/contact", key: "nav.contact" },
 ] as const;
