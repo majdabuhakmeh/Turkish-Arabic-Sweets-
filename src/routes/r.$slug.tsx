@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getRestaurantBySlug } from "@/lib/branches.functions";
 import { useBranch } from "@/context/branch";
 import { MapPin, Phone, Mail, Clock, Truck, ChevronRight } from "lucide-react";
+import { NearestBranchBanner } from "@/components/NearestBranchBanner";
 
 export const Route = createFileRoute("/r/$slug")({
   head: ({ params }) => ({
@@ -105,6 +106,13 @@ function RestaurantPage() {
             )}
           </div>
         )}
+
+        {/* Nearest branch + ETA */}
+        <div className="mt-10">
+          <NearestBranchBanner restaurantId={restaurant.id} />
+        </div>
+
+
 
         {/* Branches */}
         <div className="mt-16">

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listActiveRestaurants } from "@/lib/branches.functions";
 import { MapPin } from "lucide-react";
+import { NearestBranchBanner } from "@/components/NearestBranchBanner";
 
 export const Route = createFileRoute("/r/")({
   head: () => ({
@@ -33,6 +34,12 @@ function RestaurantsIndex() {
       <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
         Browse dessert shops, bakeries, and sweet brands available on Royal Sweets.
       </p>
+
+      <div className="mt-10">
+        <NearestBranchBanner />
+      </div>
+
+
 
       {isLoading ? (
         <p className="mt-12 text-muted-foreground">Loading brands…</p>
