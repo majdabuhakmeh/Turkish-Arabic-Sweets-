@@ -67,13 +67,14 @@ const restaurantSchema = z.object({
     .min(2)
     .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers and dashes only"),
   description: z.string().optional().nullable(),
-  logo_url: z.string().url().optional().nullable(),
-  cover_url: z.string().url().optional().nullable(),
+  logo_url: z.string().url().optional().nullable().or(z.literal("")),
+  cover_url: z.string().url().optional().nullable().or(z.literal("")),
   contact_email: z.string().email().optional().nullable().or(z.literal("")),
   contact_phone: z.string().optional().nullable(),
   currency: z.string().default("SAR"),
   status: z.enum(["pending", "active", "inactive"]).default("pending"),
   owner_id: z.string().uuid().optional().nullable(),
+  tags: z.array(z.string().min(1)).optional().default([]),
 });
 
 export const upsertRestaurant = createServerFn({ method: "POST" })
