@@ -411,11 +411,13 @@ export const upsertCategory = createServerFn({ method: "POST" })
     const payload = { ...data, image_url: data.image_url || null };
     if (data.id) {
       const { id, ...rest } = payload;
-      const { error } = await supabaseAdmin.from("categories").update(rest).eq("id", id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await supabaseAdmin.from("categories").update(rest as any).eq("id", id as string);
       if (error) throw new Error(error.message);
       return { ok: true, id };
     }
-    const { data: c, error } = await supabaseAdmin.from("categories").insert(payload).select("id").single();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: c, error } = await supabaseAdmin.from("categories").insert(payload as any).select("id").single();
     if (error) throw new Error(error.message);
     return { ok: true, id: c.id };
   });
@@ -425,7 +427,7 @@ export const deleteCategory = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: row } = await supabaseAdmin.from("categories").select("restaurant_id").eq("id", data.id).maybeSingle();
-    if (!row) throw new Error("Category not found");
+    if (!row?.restaurant_id) throw new Error("Category not found");
     await assertCanManageRestaurant(context.userId, row.restaurant_id);
     const { error } = await supabaseAdmin.from("categories").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
