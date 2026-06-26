@@ -457,11 +457,13 @@ export const upsertFood = createServerFn({ method: "POST" })
     const payload = { ...data, image_url: data.image_url || null, category_slug: data.category_slug || null };
     if (data.id) {
       const { id, ...rest } = payload;
-      const { error } = await supabaseAdmin.from("foods").update(rest).eq("id", id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await supabaseAdmin.from("foods").update(rest as any).eq("id", id as string);
       if (error) throw new Error(error.message);
       return { ok: true, id };
     }
-    const { data: f, error } = await supabaseAdmin.from("foods").insert(payload).select("id").single();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: f, error } = await supabaseAdmin.from("foods").insert(payload as any).select("id").single();
     if (error) throw new Error(error.message);
     // Seed branch_inventory for all branches of this restaurant
     const { data: brs } = await supabaseAdmin.from("branches").select("id").eq("restaurant_id", data.restaurant_id);
@@ -479,7 +481,7 @@ export const deleteFood = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: row } = await supabaseAdmin.from("foods").select("restaurant_id").eq("id", data.id).maybeSingle();
-    if (!row) throw new Error("Food not found");
+    if (!row?.restaurant_id) throw new Error("Food not found");
     await assertCanManageRestaurant(context.userId, row.restaurant_id);
     const { error } = await supabaseAdmin.from("foods").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
