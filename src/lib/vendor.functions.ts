@@ -67,13 +67,14 @@ const restaurantSchema = z.object({
     .min(2)
     .regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers and dashes only"),
   description: z.string().optional().nullable(),
-  logo_url: z.string().url().optional().nullable(),
-  cover_url: z.string().url().optional().nullable(),
+  logo_url: z.string().url().optional().nullable().or(z.literal("")),
+  cover_url: z.string().url().optional().nullable().or(z.literal("")),
   contact_email: z.string().email().optional().nullable().or(z.literal("")),
   contact_phone: z.string().optional().nullable(),
   currency: z.string().default("SAR"),
   status: z.enum(["pending", "active", "inactive"]).default("pending"),
   owner_id: z.string().uuid().optional().nullable(),
+  tags: z.array(z.string().min(1)).optional().default([]),
 });
 
 export const upsertRestaurant = createServerFn({ method: "POST" })
@@ -338,4 +339,151 @@ export const getRestaurantAnalytics = createServerFn({ method: "GET" })
       orderCount: o.length,
       branches: Array.from(byBranch.values()).sort((a, b) => b.revenue - a.revenue),
     };
+  });
+
+/* ----- assets (image uploads to private bucket, returned as long signed URLs) ----- */
+
+const ASSET_BUCKET = "restaurant-assets";
+const SIGN_TTL = 60 * 60 * 24 * 365 * 10; // ~10 years
+
+export const uploadAsset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z
+      .object({
+        folder: z.enum(["logos", "covers", "foods", "categories", "branches"]),
+        filename: z.string().min(1),
+        contentType: z.string().min(1),
+        // base64 of file bytes (no data: prefix)
+        base64: z.string().min(1),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const safe = data.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `${data.folder}/${context.userId}/${Date.now()}-${safe}`;
+    const bytes = Buffer.from(data.base64, "base64");
+    const { error } = await supabaseAdmin.storage
+      .from(ASSET_BUCKET)
+      .upload(path, bytes, { contentType: data.contentType, upsert: false });
+    if (error) throw new Error(error.message);
+    const { data: signed, error: sErr } = await supabaseAdmin.storage
+      .from(ASSET_BUCKET)
+      .createSignedUrl(path, SIGN_TTL);
+    if (sErr) throw new Error(sErr.message);
+    return { url: signed.signedUrl, path };
+  });
+
+/* ----- restaurant detail (with branches, foods, categories) ----- */
+
+export const getRestaurantDetail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertCanManageRestaurant(context.userId, data.id);
+    const [{ data: restaurant }, { data: branches }, { data: foods }, { data: categories }] =
+      await Promise.all([
+        supabaseAdmin.from("restaurants").select("*").eq("id", data.id).single(),
+        supabaseAdmin.from("branches").select("*").eq("restaurant_id", data.id).order("name"),
+        supabaseAdmin.from("foods").select("*").eq("restaurant_id", data.id).order("created_at", { ascending: false }),
+        supabaseAdmin.from("categories").select("*").eq("restaurant_id", data.id).order("sort_order"),
+      ]);
+    if (!restaurant) throw new Error("Restaurant not found");
+    return { restaurant, branches: branches ?? [], foods: foods ?? [], categories: categories ?? [] };
+  });
+
+/* ----- categories CRUD ----- */
+
+const categorySchema = z.object({
+  id: z.string().uuid().optional(),
+  restaurant_id: z.string().uuid(),
+  name: z.string().min(1),
+  slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "lowercase, numbers, dashes"),
+  image_url: z.string().url().optional().nullable().or(z.literal("")),
+  sort_order: z.coerce.number().int().default(0),
+});
+
+export const upsertCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => categorySchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertCanManageRestaurant(context.userId, data.restaurant_id);
+    const payload = { ...data, image_url: data.image_url || null };
+    if (data.id) {
+      const { id, ...rest } = payload;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await supabaseAdmin.from("categories").update(rest as any).eq("id", id as string);
+      if (error) throw new Error(error.message);
+      return { ok: true, id };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: c, error } = await supabaseAdmin.from("categories").insert(payload as any).select("id").single();
+    if (error) throw new Error(error.message);
+    return { ok: true, id: c.id };
+  });
+
+export const deleteCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: row } = await supabaseAdmin.from("categories").select("restaurant_id").eq("id", data.id).maybeSingle();
+    if (!row?.restaurant_id) throw new Error("Category not found");
+    await assertCanManageRestaurant(context.userId, row.restaurant_id);
+    const { error } = await supabaseAdmin.from("categories").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/* ----- foods CRUD ----- */
+
+const foodSchema = z.object({
+  id: z.string().uuid().optional(),
+  restaurant_id: z.string().uuid(),
+  name: z.string().min(1),
+  slug: z.string().min(1).regex(/^[a-z0-9-]+$/, "lowercase, numbers, dashes"),
+  description: z.string().optional().nullable(),
+  price: z.coerce.number().min(0),
+  image_url: z.string().url().optional().nullable().or(z.literal("")),
+  category_slug: z.string().optional().nullable(),
+  is_available: z.boolean().default(true),
+  is_featured: z.boolean().default(false),
+});
+
+export const upsertFood = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => foodSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertCanManageRestaurant(context.userId, data.restaurant_id);
+    const payload = { ...data, image_url: data.image_url || null, category_slug: data.category_slug || null };
+    if (data.id) {
+      const { id, ...rest } = payload;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await supabaseAdmin.from("foods").update(rest as any).eq("id", id as string);
+      if (error) throw new Error(error.message);
+      return { ok: true, id };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: f, error } = await supabaseAdmin.from("foods").insert(payload as any).select("id").single();
+    if (error) throw new Error(error.message);
+    // Seed branch_inventory for all branches of this restaurant
+    const { data: brs } = await supabaseAdmin.from("branches").select("id").eq("restaurant_id", data.restaurant_id);
+    if (brs?.length) {
+      await supabaseAdmin.from("branch_inventory").upsert(
+        brs.map((b) => ({ branch_id: b.id, food_id: f.id, available: true })),
+        { onConflict: "branch_id,food_id" },
+      );
+    }
+    return { ok: true, id: f.id };
+  });
+
+export const deleteFood = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: row } = await supabaseAdmin.from("foods").select("restaurant_id").eq("id", data.id).maybeSingle();
+    if (!row?.restaurant_id) throw new Error("Food not found");
+    await assertCanManageRestaurant(context.userId, row.restaurant_id);
+    const { error } = await supabaseAdmin.from("foods").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
