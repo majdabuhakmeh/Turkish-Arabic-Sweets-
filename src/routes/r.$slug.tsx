@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getRestaurantBySlug } from "@/lib/branches.functions";
+import { getRestaurantBySlug, getRestaurantMenu } from "@/lib/branches.functions";
 import { useBranch } from "@/context/branch";
-import { MapPin, Phone, Mail, Clock, Truck, ChevronRight } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Truck, ChevronRight, AlertCircle } from "lucide-react";
 import { NearestBranchBanner } from "@/components/NearestBranchBanner";
+import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/r/$slug")({
   head: ({ params }) => ({
