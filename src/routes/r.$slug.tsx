@@ -212,6 +212,143 @@ function RestaurantPage() {
             )}
           </div>
         </div>
+
+        {/* Menu — branch aware */}
+        <div className="mt-20">
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div>
+              <span className="text-xs uppercase tracking-[0.25em] text-primary">Menu</span>
+              <h2 className="mt-2 font-display text-3xl lg:text-4xl">What's on offer</h2>
+              {branchForMenu ? (
+                <p className="mt-2 text-sm text-muted-foreground inline-flex items-center gap-2">
+                  <MapPin className="size-4 text-primary" />
+                  Pricing &amp; availability for{" "}
+                  <span className="font-medium text-foreground">{branchForMenu.name}</span>
+                  {branchForMenu.city ? <span>· {branchForMenu.city}</span> : null}
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-muted-foreground inline-flex items-center gap-2">
+                  <AlertCircle className="size-4" />
+                  Pick a branch above to see live availability and pricing.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Category filter */}
+          {(menu?.categories?.length ?? 0) > 0 && (
+            <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
+              <button
+                onClick={() => setActiveCat("all")}
+                className={`shrink-0 rounded-full px-5 h-10 text-sm font-medium transition-all ${
+                  activeCat === "all"
+                    ? "bg-foreground text-background"
+                    : "bg-card border border-border hover:border-foreground"
+                }`}
+              >
+                All
+              </button>
+              {menu!.categories.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveCat(c.slug)}
+                  className={`shrink-0 rounded-full px-5 h-10 text-sm font-medium transition-all ${
+                    activeCat === c.slug
+                      ? "bg-foreground text-background"
+                      : "bg-card border border-border hover:border-foreground"
+                  }`}
+                >
+                  {c.name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredFoods.map((f) => {
+              const discounted =
+                branchForMenu && f.effective_price < f.price;
+              const lowStock = f.stock != null && f.stock > 0 && f.stock <= 5;
+              return (
+                <article
+                  key={f.id}
+                  className={`group relative overflow-hidden rounded-3xl bg-card shadow-soft transition-transform duration-500 ${
+                    f.available ? "hover:-translate-y-1" : "opacity-75"
+                  }`}
+                >
+                  <div className="relative aspect-[4/5] overflow-hidden bg-muted">
+                    {f.image_url ? (
+                      <img
+                        src={f.image_url}
+                        alt={f.name}
+                        loading="lazy"
+                        className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="size-full grid place-items-center text-muted-foreground text-sm">
+                        No image
+                      </div>
+                    )}
+                    {!f.available && (
+                      <div className="absolute inset-0 grid place-items-center bg-background/70 backdrop-blur-sm">
+                        <span className="rounded-full bg-foreground text-background text-xs font-semibold tracking-wider uppercase px-4 py-2">
+                          {branchForMenu ? `Sold out · ${branchForMenu.name}` : "Sold out"}
+                        </span>
+                      </div>
+                    )}
+                    {f.available && lowStock && (
+                      <div className="absolute top-4 left-4 rounded-full bg-secondary text-secondary-foreground text-[11px] font-semibold tracking-wider uppercase px-3 py-1">
+                        Only {f.stock} left
+                      </div>
+                    )}
+                    {discounted && (
+                      <div className="absolute top-4 right-4 rounded-full bg-destructive text-destructive-foreground text-[11px] font-semibold tracking-wider uppercase px-3 py-1">
+                        Branch price
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-baseline justify-between gap-4">
+                      <h3 className="font-display text-2xl leading-tight">{f.name}</h3>
+                      <div className="text-right">
+                        {discounted && (
+                          <div className="text-xs text-muted-foreground line-through">
+                            {f.price.toFixed(2)} {restaurant.currency ?? "SAR"}
+                          </div>
+                        )}
+                        <div className="font-display text-2xl text-primary">
+                          {f.effective_price.toFixed(2)} {restaurant.currency ?? "SAR"}
+                        </div>
+                      </div>
+                    </div>
+                    {f.description && (
+                      <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2">{f.description}</p>
+                    )}
+                    <div className="mt-4 flex items-center gap-2">
+                      {f.available ? (
+                        <Badge variant="secondary" className="rounded-full">
+                          Available now
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="rounded-full">
+                          Unavailable
+                        </Badge>
+                      )}
+                      {f.is_featured && (
+                        <Badge className="rounded-full">Featured</Badge>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+            {filteredFoods.length === 0 && (
+              <p className="text-muted-foreground col-span-full py-10 text-center">
+                No items in this category yet.
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
