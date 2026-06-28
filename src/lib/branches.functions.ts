@@ -157,3 +157,75 @@ export const getBranchInventoryBySlug = createServerFn({ method: "GET" })
     }
     return map;
   });
+
+/** Public: full menu for a restaurant, with branch-aware availability + price overlay.
+ *  If branchId is omitted, all foods are returned as base-price/available.
+ */
+export const getRestaurantMenu = createServerFn({ method: "GET" })
+  .inputValidator((d) =>
+    z.object({ slug: z.string(), branchId: z.string().uuid().optional() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { data: restaurant } = await supabaseAdmin
+      .from("restaurants")
+      .select("id,name,slug,currency,status")
+      .eq("slug", data.slug)
+      .eq("status", "active")
+      .maybeSingle();
+    if (!restaurant) return null;
+
+    const [{ data: categories }, { data: foods }] = await Promise.all([
+      supabaseAdmin
+        .from("categories")
+        .select("id,name,slug,image_url,sort_order")
+        .eq("restaurant_id", restaurant.id)
+        .order("sort_order", { ascending: true }),
+      supabaseAdmin
+        .from("foods")
+        .select("id,name,slug,description,price,image_url,category_slug,is_available,is_featured")
+        .eq("restaurant_id", restaurant.id)
+        .eq("is_available", true)
+        .order("created_at", { ascending: false }),
+    ]);
+
+    let inv: Record<string, { available: boolean; price_override: number | null; stock: number | null }> = {};
+    if (data.branchId) {
+      const { data: rows } = await supabaseAdmin
+        .from("branch_inventory")
+        .select("food_id,available,price_override,stock")
+        .eq("branch_id", data.branchId);
+      for (const r of rows ?? []) {
+        inv[r.food_id] = {
+          available: !!r.available,
+          price_override: r.price_override == null ? null : Number(r.price_override),
+          stock: r.stock == null ? null : Number(r.stock),
+        };
+      }
+    }
+
+    const items = (foods ?? []).map((f) => {
+      const e = data.branchId ? inv[f.id] : undefined;
+      const has_inventory_row = !!e;
+      const available = data.branchId
+        ? e
+          ? e.available && (e.stock == null || e.stock > 0)
+          : true // no row yet → default available so the storefront keeps working
+        : true;
+      const effective_price = e?.price_override != null ? e.price_override : Number(f.price);
+      return {
+        ...f,
+        price: Number(f.price),
+        effective_price,
+        available,
+        stock: e?.stock ?? null,
+        price_override: e?.price_override ?? null,
+        has_inventory_row,
+      };
+    });
+
+    return {
+      restaurant,
+      categories: categories ?? [],
+      foods: items,
+    };
+  });
