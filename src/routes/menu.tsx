@@ -5,6 +5,7 @@ import { FoodCard } from "@/components/FoodCard";
 import { Search as SearchIcon, MapPin } from "lucide-react";
 import { useI18n, useT } from "@/context/i18n";
 import { useBranch } from "@/context/branch";
+import { BranchSwitcher } from "@/components/BranchSwitcher";
 
 type SearchParams = { cat?: string };
 
