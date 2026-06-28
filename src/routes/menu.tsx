@@ -5,6 +5,7 @@ import { FoodCard } from "@/components/FoodCard";
 import { Search as SearchIcon, MapPin } from "lucide-react";
 import { useI18n, useT } from "@/context/i18n";
 import { useBranch } from "@/context/branch";
+import { BranchSwitcher } from "@/components/BranchSwitcher";
 
 type SearchParams = { cat?: string };
 
@@ -54,11 +55,19 @@ function MenuPage() {
           {t("menu.subtitle")}
         </p>
         {selected && (
-          <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
-            <MapPin className="size-4 text-primary" />
-            <span className="text-muted-foreground">Showing menu for</span>
-            <span className="font-medium">{selected.name}</span>
-            {selected.city && <span className="text-muted-foreground">· {selected.city}</span>}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
+              <MapPin className="size-4 text-primary" />
+              <span className="text-muted-foreground">Showing menu for</span>
+              <span className="font-medium">{selected.name}</span>
+              {selected.city && <span className="text-muted-foreground">· {selected.city}</span>}
+            </div>
+            <BranchSwitcher />
+          </div>
+        )}
+        {!selected && (
+          <div className="mt-6">
+            <BranchSwitcher />
           </div>
         )}
       </div>
