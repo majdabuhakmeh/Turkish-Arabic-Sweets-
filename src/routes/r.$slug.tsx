@@ -24,13 +24,35 @@ function RestaurantPage() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
   const fetcher = useServerFn(getRestaurantBySlug);
+  const menuFetcher = useServerFn(getRestaurantMenu);
   const { selectBranch, selected } = useBranch();
+  const [activeCat, setActiveCat] = useState<string>("all");
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["restaurant", slug],
     queryFn: () => fetcher({ data: { slug } }),
     staleTime: 60_000,
   });
+
+  // Only filter the inventory overlay by branch when that branch belongs to this restaurant.
+  const branchForMenu =
+    selected && data?.restaurant && selected.restaurant_id === data.restaurant.id
+      ? selected
+      : null;
+
+  const { data: menu } = useQuery({
+    queryKey: ["restaurant-menu", slug, branchForMenu?.id ?? null],
+    queryFn: () =>
+      menuFetcher({ data: { slug, branchId: branchForMenu?.id } }),
+    enabled: !!data?.restaurant,
+    staleTime: 30_000,
+  });
+
+  const filteredFoods = useMemo(() => {
+    const list = menu?.foods ?? [];
+    const f = activeCat === "all" ? list : list.filter((x) => x.category_slug === activeCat);
+    return [...f].sort((a, b) => Number(b.available) - Number(a.available));
+  }, [menu, activeCat]);
 
   if (isLoading) {
     return <div className="mx-auto max-w-7xl px-6 py-20 text-muted-foreground">Loading…</div>;
