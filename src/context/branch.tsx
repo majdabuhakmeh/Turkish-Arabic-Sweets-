@@ -36,10 +36,30 @@ type BranchCtx = {
   inventoryReady: boolean;
   isAvailable: (slug: string) => boolean;
   effectivePrice: (slug: string, basePrice: number) => number;
+  /** Scope branch selection to a specific restaurant (e.g. on `/r/:slug`). Pass null to clear. */
+  setRestaurantScope: (restaurantId: string | null) => void;
 };
 
 const Ctx = createContext<BranchCtx | null>(null);
-const STORAGE_KEY = "royalsweets.branch";
+const STORAGE_KEY = "royalsweets.branch"; // global last-selected (for /menu and unscoped pages)
+const STORAGE_MAP_KEY = "royalsweets.branchByRestaurant"; // { [restaurantId]: branchId }
+
+function readMap(): Record<string, string> {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_MAP_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeMap(map: Record<string, string>) {
+  try {
+    window.localStorage.setItem(STORAGE_MAP_KEY, JSON.stringify(map));
+  } catch {}
+}
 
 export function BranchProvider({ children }: { children: ReactNode }) {
   const list = useServerFn(listActiveBranches);
@@ -47,6 +67,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
   const [located, setLocated] = useState<{ lat: number; lng: number } | null>(null);
   const [detecting, setDetecting] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [scopeRestaurantId, setScopeRestaurantId] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -71,20 +92,58 @@ export function BranchProvider({ children }: { children: ReactNode }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const branches: Branch[] = (ranked ?? rawBranches) as any;
 
-  // Auto-pick: stored → nearest in-range → first
+  // When the scope changes, prefer the per-restaurant stored branch over the global one.
   useEffect(() => {
+    if (!scopeRestaurantId) return;
+    if (!branches.length) return;
+    const map = readMap();
+    const storedForRestaurant = map[scopeRestaurantId];
+    if (storedForRestaurant && branches.some((b) => b.id === storedForRestaurant)) {
+      if (selectedId !== storedForRestaurant) setSelectedId(storedForRestaurant);
+      return;
+    }
+    // No stored choice for this restaurant — if current selection belongs to another
+    // restaurant, switch to a sensible default within scope.
+    const current = branches.find((b) => b.id === selectedId);
+    if (current && current.restaurant_id === scopeRestaurantId) return;
+    const scoped = branches.filter((b) => b.restaurant_id === scopeRestaurantId);
+    if (!scoped.length) return;
+    const inRange = scoped.find((b) => b.in_range);
+    const next = inRange ?? scoped[0];
+    setSelectedId(next.id);
+  }, [scopeRestaurantId, branches, selectedId]);
+
+  // Unscoped auto-pick: stored → nearest in-range → first
+  useEffect(() => {
+    if (scopeRestaurantId) return;
     if (!branches.length) return;
     if (selectedId && branches.some((b) => b.id === selectedId)) return;
     const inRange = branches.find((b) => b.in_range);
     const next = inRange ?? branches[0];
     setSelectedId(next.id);
-  }, [branches, selectedId]);
+  }, [branches, selectedId, scopeRestaurantId]);
 
   const selected = branches.find((b) => b.id === selectedId) ?? null;
 
-  const selectBranch = useCallback((id: string) => {
-    setSelectedId(id);
-    try { window.localStorage.setItem(STORAGE_KEY, id); } catch {}
+  const selectBranch = useCallback(
+    (id: string) => {
+      setSelectedId(id);
+      try {
+        window.localStorage.setItem(STORAGE_KEY, id);
+      } catch {}
+      // Persist per-restaurant choice for the branch's restaurant.
+      const branch = branches.find((b) => b.id === id);
+      if (branch?.restaurant_id) {
+        const map = readMap();
+        map[branch.restaurant_id] = id;
+        writeMap(map);
+      }
+    },
+    [branches],
+  );
+
+  const setRestaurantScope = useCallback((restaurantId: string | null) => {
+    setScopeRestaurantId(restaurantId);
   }, []);
 
   const detectLocation = useCallback(async () => {
@@ -114,8 +173,6 @@ export function BranchProvider({ children }: { children: ReactNode }) {
   const helpers = useMemo(() => {
     const isAvailable = (slug: string) => {
       const e = inventory[slug];
-      // If we have no inventory row yet (e.g. still loading or branch never seeded
-      // this food), default to available so the storefront keeps working.
       if (!e) return true;
       if (!e.available) return false;
       if (e.stock != null && e.stock <= 0) return false;
@@ -139,6 +196,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
         located,
         inventory,
         inventoryReady,
+        setRestaurantScope,
         ...helpers,
       }}
     >

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getRestaurantBySlug, getRestaurantMenu } from "@/lib/branches.functions";
@@ -25,7 +25,7 @@ function RestaurantPage() {
   const navigate = useNavigate();
   const fetcher = useServerFn(getRestaurantBySlug);
   const menuFetcher = useServerFn(getRestaurantMenu);
-  const { selectBranch, selected } = useBranch();
+  const { selectBranch, selected, setRestaurantScope } = useBranch();
   const [activeCat, setActiveCat] = useState<string>("all");
 
   const { data, isLoading, isError } = useQuery({
@@ -33,6 +33,13 @@ function RestaurantPage() {
     queryFn: () => fetcher({ data: { slug } }),
     staleTime: 60_000,
   });
+
+  // Scope branch selection to this restaurant so per-restaurant memory applies.
+  useEffect(() => {
+    if (!data?.restaurant?.id) return;
+    setRestaurantScope(data.restaurant.id);
+    return () => setRestaurantScope(null);
+  }, [data?.restaurant?.id, setRestaurantScope]);
 
   // Only filter the inventory overlay by branch when that branch belongs to this restaurant.
   const branchForMenu =
