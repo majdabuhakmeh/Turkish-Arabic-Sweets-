@@ -126,7 +126,8 @@ export function BranchProvider({ children }: { children: ReactNode }) {
     try { window.localStorage.setItem(STORAGE_KEY, next.id); } catch {}
   }, [scopeRestaurantId, branches, selectedId]);
 
-  // Unscoped auto-pick: stored → nearest in-range → first
+  // Unscoped auto-pick: stored → nearest in-range → first.
+  // Also prunes any per-restaurant entries that point to branches no longer in the active list.
   useEffect(() => {
     if (scopeRestaurantId) return;
     if (!branches.length) return;
@@ -134,6 +135,16 @@ export function BranchProvider({ children }: { children: ReactNode }) {
     const inRange = branches.find((b) => b.in_range);
     const next = inRange ?? branches[0];
     setSelectedId(next.id);
+    try { window.localStorage.setItem(STORAGE_KEY, next.id); } catch {}
+    const map = readMap();
+    let changed = false;
+    for (const [rid, bid] of Object.entries(map)) {
+      if (!branches.some((b) => b.id === bid)) {
+        delete map[rid];
+        changed = true;
+      }
+    }
+    if (changed) writeMap(map);
   }, [branches, selectedId, scopeRestaurantId]);
 
   const selected = branches.find((b) => b.id === selectedId) ?? null;
