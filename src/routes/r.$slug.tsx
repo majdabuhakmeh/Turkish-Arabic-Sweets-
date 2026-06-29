@@ -34,6 +34,13 @@ function RestaurantPage() {
     staleTime: 60_000,
   });
 
+  // Scope branch selection to this restaurant so per-restaurant memory applies.
+  useEffect(() => {
+    if (!data?.restaurant?.id) return;
+    setRestaurantScope(data.restaurant.id);
+    return () => setRestaurantScope(null);
+  }, [data?.restaurant?.id, setRestaurantScope]);
+
   // Only filter the inventory overlay by branch when that branch belongs to this restaurant.
   const branchForMenu =
     selected && data?.restaurant && selected.restaurant_id === data.restaurant.id
