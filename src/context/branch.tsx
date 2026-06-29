@@ -102,15 +102,28 @@ export function BranchProvider({ children }: { children: ReactNode }) {
       if (selectedId !== storedForRestaurant) setSelectedId(storedForRestaurant);
       return;
     }
-    // No stored choice for this restaurant — if current selection belongs to another
-    // restaurant, switch to a sensible default within scope.
+    // Stored entry is missing or stale — drop it so we don't re-evaluate next time.
+    if (storedForRestaurant) {
+      delete map[scopeRestaurantId];
+      writeMap(map);
+    }
+    // If current selection already belongs to this restaurant, keep it and persist.
     const current = branches.find((b) => b.id === selectedId);
-    if (current && current.restaurant_id === scopeRestaurantId) return;
+    if (current && current.restaurant_id === scopeRestaurantId) {
+      const m = readMap();
+      m[scopeRestaurantId] = current.id;
+      writeMap(m);
+      return;
+    }
     const scoped = branches.filter((b) => b.restaurant_id === scopeRestaurantId);
     if (!scoped.length) return;
     const inRange = scoped.find((b) => b.in_range);
     const next = inRange ?? scoped[0];
     setSelectedId(next.id);
+    const m = readMap();
+    m[scopeRestaurantId] = next.id;
+    writeMap(m);
+    try { window.localStorage.setItem(STORAGE_KEY, next.id); } catch {}
   }, [scopeRestaurantId, branches, selectedId]);
 
   // Unscoped auto-pick: stored → nearest in-range → first
