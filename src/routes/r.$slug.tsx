@@ -25,7 +25,7 @@ function RestaurantPage() {
   const navigate = useNavigate();
   const fetcher = useServerFn(getRestaurantBySlug);
   const menuFetcher = useServerFn(getRestaurantMenu);
-  const { selectBranch, selected } = useBranch();
+  const { selectBranch, selected, setRestaurantScope } = useBranch();
   const [activeCat, setActiveCat] = useState<string>("all");
 
   const { data, isLoading, isError } = useQuery({
