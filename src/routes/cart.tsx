@@ -15,7 +15,9 @@ function CartPage() {
   const t = useT();
   const { locale } = useI18n();
   const { selected } = useBranch();
-  const delivery = subtotal > 0 ? Number(selected?.delivery_fee ?? 3.5) : 0;
+  const delivery = subtotal > 0 ? Number(selected?.delivery_fee ?? 0) : 0;
+  const minOrder = Number(selected?.min_order ?? 0);
+  const belowMin = minOrder > 0 && subtotal > 0 && subtotal < minOrder;
   const tax = subtotal * 0.08;
   const total = subtotal + delivery + tax;
 
