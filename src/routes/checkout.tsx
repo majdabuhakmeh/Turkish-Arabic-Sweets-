@@ -319,7 +319,7 @@ function CheckoutPage() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || missingBranch || belowMin}
             className="mt-8 w-full rounded-full bg-primary text-primary-foreground h-14 font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {submitting && <Loader2 className="size-4 animate-spin" />}
