@@ -15,7 +15,9 @@ function CartPage() {
   const t = useT();
   const { locale } = useI18n();
   const { selected } = useBranch();
-  const delivery = subtotal > 0 ? Number(selected?.delivery_fee ?? 3.5) : 0;
+  const delivery = subtotal > 0 ? Number(selected?.delivery_fee ?? 0) : 0;
+  const minOrder = Number(selected?.min_order ?? 0);
+  const belowMin = minOrder > 0 && subtotal > 0 && subtotal < minOrder;
   const tax = subtotal * 0.08;
   const total = subtotal + delivery + tax;
 
@@ -60,6 +62,16 @@ function CartPage() {
           <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
           <p>
             Some items aren&rsquo;t available at <strong>{selected?.name ?? "this branch"}</strong>. Remove them or switch branches to continue.
+          </p>
+        </div>
+      )}
+
+      {belowMin && (
+        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/5 px-5 py-4 text-sm">
+          <AlertCircle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+          <p>
+            {selected?.name} has a minimum order of <strong>${minOrder.toFixed(2)}</strong>. Add
+            <strong> ${(minOrder - subtotal).toFixed(2)} </strong>more to check out.
           </p>
         </div>
       )}
@@ -149,12 +161,12 @@ function CartPage() {
               <dd className="font-display text-3xl text-primary">${total.toFixed(2)}</dd>
             </div>
           </dl>
-          {hasUnavailable ? (
+          {hasUnavailable || belowMin ? (
             <button
               disabled
               className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-muted text-muted-foreground h-14 font-medium cursor-not-allowed"
             >
-              Resolve unavailable items
+              {hasUnavailable ? "Resolve unavailable items" : `Add $${(minOrder - subtotal).toFixed(2)} to check out`}
             </button>
           ) : (
             <Link

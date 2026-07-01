@@ -47,7 +47,10 @@ function CheckoutPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pending, setPending] = useState<{ code: string; discount: number } | null>(null);
 
-  const delivery = Number(branch?.delivery_fee ?? 3.5);
+  const delivery = Number(branch?.delivery_fee ?? 0);
+  const minOrder = Number(branch?.min_order ?? 0);
+  const belowMin = minOrder > 0 && subtotal < minOrder;
+  const missingBranch = !branch;
   const taxRate = 0.08;
   const discount = coupon ? Math.min(coupon.discount, subtotal) : 0;
   const discounted = Math.max(0, subtotal - discount);
@@ -142,21 +145,27 @@ function CheckoutPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!branch) {
+      toast.error("Please select a branch before placing your order.");
+      return;
+    }
+    if (belowMin) {
+      toast.error(
+        `${branch.name} has a minimum order of $${minOrder.toFixed(2)}.`,
+      );
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await place({
         data: {
+          branch_id: branch.id,
           items: detailed.map((d) => ({
-            food_id: d.food.id,
-            name: d.food.name,
-            image_url: d.food.image,
-            unit_price: d.unitPrice,
+            food_slug: d.food.id,
             qty: d.qty,
           })),
           delivery: { name, phone, address, city, notes: notes || undefined },
           payment_method: pay,
-          delivery_fee: delivery,
-          tax_rate: taxRate,
           coupon_code: coupon?.code,
         },
       });
@@ -172,6 +181,34 @@ function CheckoutPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
       <h1 className="font-display text-6xl">Checkout</h1>
+
+      {branch && (
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
+          <span className="text-muted-foreground">Fulfilled by</span>
+          <span className="font-medium">{branch.name}</span>
+          {branch.eta_minutes && (
+            <span className="text-muted-foreground">· ~{branch.eta_minutes} min</span>
+          )}
+        </div>
+      )}
+
+      {missingBranch && (
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm">
+          <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
+          <p>Select a branch before placing your order.</p>
+        </div>
+      )}
+
+      {belowMin && (
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm">
+          <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
+          <p>
+            {branch?.name} has a minimum order of <strong>${minOrder.toFixed(2)}</strong>. Add
+            <strong> ${(minOrder - subtotal).toFixed(2)} </strong>more to continue.
+          </p>
+        </div>
+      )}
+
       <form onSubmit={submit} className="mt-12 grid lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-10">
           <section>
@@ -282,7 +319,7 @@ function CheckoutPage() {
 
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || missingBranch || belowMin}
             className="mt-8 w-full rounded-full bg-primary text-primary-foreground h-14 font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {submitting && <Loader2 className="size-4 animate-spin" />}
