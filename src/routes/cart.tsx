@@ -66,6 +66,16 @@ function CartPage() {
         </div>
       )}
 
+      {belowMin && (
+        <div className="mt-4 flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/5 px-5 py-4 text-sm">
+          <AlertCircle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+          <p>
+            {selected?.name} has a minimum order of <strong>${minOrder.toFixed(2)}</strong>. Add
+            <strong> ${(minOrder - subtotal).toFixed(2)} </strong>more to check out.
+          </p>
+        </div>
+      )}
+
       <div className="mt-12 grid lg:grid-cols-3 gap-12">
         <ul className="lg:col-span-2 divide-y divide-border">
           {detailed.map(({ food, qty, lineTotal, unitPrice, available }) => {
