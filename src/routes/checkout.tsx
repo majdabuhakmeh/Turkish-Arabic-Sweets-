@@ -145,21 +145,27 @@ function CheckoutPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!branch) {
+      toast.error("Please select a branch before placing your order.");
+      return;
+    }
+    if (belowMin) {
+      toast.error(
+        `${branch.name} has a minimum order of $${minOrder.toFixed(2)}.`,
+      );
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await place({
         data: {
+          branch_id: branch.id,
           items: detailed.map((d) => ({
-            food_id: d.food.id,
-            name: d.food.name,
-            image_url: d.food.image,
-            unit_price: d.unitPrice,
+            food_slug: d.food.id,
             qty: d.qty,
           })),
           delivery: { name, phone, address, city, notes: notes || undefined },
           payment_method: pay,
-          delivery_fee: delivery,
-          tax_rate: taxRate,
           coupon_code: coupon?.code,
         },
       });
