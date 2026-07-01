@@ -161,12 +161,12 @@ function CartPage() {
               <dd className="font-display text-3xl text-primary">${total.toFixed(2)}</dd>
             </div>
           </dl>
-          {hasUnavailable ? (
+          {hasUnavailable || belowMin ? (
             <button
               disabled
               className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-muted text-muted-foreground h-14 font-medium cursor-not-allowed"
             >
-              Resolve unavailable items
+              {hasUnavailable ? "Resolve unavailable items" : `Add $${(minOrder - subtotal).toFixed(2)} to check out`}
             </button>
           ) : (
             <Link
