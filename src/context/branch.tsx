@@ -14,6 +14,7 @@ export type Branch = {
   longitude?: number | null;
   delivery_radius_km?: number | string | null;
   delivery_fee?: number | string | null;
+  min_order?: number | string | null;
   eta_minutes?: number | null;
   distance_km?: number;
   in_range?: boolean;
