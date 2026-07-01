@@ -47,7 +47,10 @@ function CheckoutPage() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pending, setPending] = useState<{ code: string; discount: number } | null>(null);
 
-  const delivery = Number(branch?.delivery_fee ?? 3.5);
+  const delivery = Number(branch?.delivery_fee ?? 0);
+  const minOrder = Number(branch?.min_order ?? 0);
+  const belowMin = minOrder > 0 && subtotal < minOrder;
+  const missingBranch = !branch;
   const taxRate = 0.08;
   const discount = coupon ? Math.min(coupon.discount, subtotal) : 0;
   const discounted = Math.max(0, subtotal - discount);
