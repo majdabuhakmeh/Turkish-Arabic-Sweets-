@@ -55,6 +55,32 @@ function BranchOrders() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Realtime: notify when a new order lands on the active branch.
+  const seen = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!activeId) return;
+    const channel = supabase
+      .channel(`branch-orders:${activeId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "orders", filter: `branch_id=eq.${activeId}` },
+        (payload) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const row = payload.new as any;
+          if (!row?.id || seen.current.has(row.id)) return;
+          seen.current.add(row.id);
+          playChime();
+          toast.success("New order received", {
+            description: `#${String(row.id).slice(0, 8)} · ${Number(row.total ?? 0).toFixed(2)} SAR`,
+          });
+          qc.invalidateQueries({ queryKey: ["branch-orders", activeId] });
+        },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [activeId, qc]);
+
+
   const statuses = ["pending", "confirmed", "preparing", "out_for_delivery", "delivered", "cancelled"];
 
   return (
