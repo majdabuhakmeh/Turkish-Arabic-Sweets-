@@ -509,6 +509,7 @@ export type Database = {
           delivery_phone: string
           discount: number
           estimated_delivery_at: string | null
+          fulfillment_type: string
           id: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           restaurant_id: string | null
@@ -531,6 +532,7 @@ export type Database = {
           delivery_phone: string
           discount?: number
           estimated_delivery_at?: string | null
+          fulfillment_type?: string
           id?: string
           payment_method: Database["public"]["Enums"]["payment_method"]
           restaurant_id?: string | null
@@ -553,6 +555,7 @@ export type Database = {
           delivery_phone?: string
           discount?: number
           estimated_delivery_at?: string | null
+          fulfillment_type?: string
           id?: string
           payment_method?: Database["public"]["Enums"]["payment_method"]
           restaurant_id?: string | null
@@ -748,6 +751,33 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      waitlist: {
+        Row: {
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          lat: number | null
+          lng: number | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
         }
         Relationships: []
       }

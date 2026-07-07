@@ -1,111 +1,78 @@
-# Multi-Restaurant & Multi-Branch Architecture
+# Remaining Features (excluding email domain setup)
 
-This is a large, foundational change. I'll roll it out in phases so the existing Royal Sweets storefront keeps working at every step. Royal Sweets becomes the first "restaurant" (vendor) and its current catalog the first "branch" — nothing breaks for existing customers.
+Six focused pieces, ordered so each ships independently and the storefront keeps working throughout.
 
-## Phase 1 — Database foundation (migration)
+## 1. Per-branch landing pages — `/r/:slug/:branchCode`
 
-New tables:
+- New public SSR route `src/routes/r.$slug.$branchCode.tsx`.
+- Loader calls a new public server fn `getBranchLanding({ slug, branchCode })` using the **server publishable client** — returns `{ restaurant, branch, categories, foods }` filtered by `branch_inventory.available` with `price_override` applied.
+- Route `head()` sets branch-specific title/description/OG (name + city + restaurant), `og:image` from branch or restaurant cover.
+- Reuses existing `FoodCard`; clicking a food sets active branch in `BranchContext`, then routes to `/food/:id`.
+- Link from `/r/:slug` branch list to each branch page.
 
-- `restaurants` — id, name, slug (unique), description, logo_url, cover_url, contact_email, contact_phone, business_hours (jsonb), status (`pending|active|inactive`), owner_id → auth.users, currency (default SAR), timestamps.
-- `branches` — id, restaurant_id, name, code (unique per restaurant), address, city, country, latitude, longitude, phone, opening_hours (jsonb), delivery_radius_km, manager_id → auth.users, status (`pending|active|inactive`), timestamps.
-- `branch_staff` — id, branch_id, user_id, role (`manager|staff`), unique (branch_id, user_id).
-- `branch_inventory` — id, branch_id, food_id, available (bool), stock (int nullable), price_override (numeric nullable), unique (branch_id, food_id).
-- `delivery_zones` — id, branch_id, polygon (jsonb) or radius fallback, fee, min_subtotal, eta_minutes.
+## 2. Multi-currency display
 
-Extend existing tables (nullable first, backfill, then required where safe):
+- Add `currency` (default `SAR`) to `BranchContext` — resolved from the active branch's `restaurants.currency`.
+- New `src/lib/currency.ts` with `formatCurrency(amount, code)` (Intl.NumberFormat).
+- Replace every hardcoded `SAR` in `cart.tsx`, `checkout.tsx`, `orders.tsx`, `orders.$id.tsx`, `food.$id.tsx`, `menu.tsx`, `FoodCard.tsx`, `branch.orders.tsx`, `vendor.analytics.tsx` with `formatCurrency`.
+- Orders already store totals in the restaurant's currency implicitly — display uses the order's `restaurant_id → currency`. Add `currency` to orders read queries.
 
-- `foods` → add `restaurant_id` (FK).
-- `categories` → add `restaurant_id` nullable (null = global).
-- `orders` → add `restaurant_id`, `branch_id`.
-- `coupons` → add `restaurant_id` nullable (null = platform-wide).
+## 3. Home geolocation + pickup / "coming soon" fallback
 
-Extend `app_role` enum: `restaurant_owner`, `branch_manager`, `staff` (keep `admin`, `user`).
+- Extend `NearestBranchBanner` (or new `LocationGate` in `src/routes/index.tsx`) to request `navigator.geolocation` with a "Use my location" button + city dropdown fallback.
+- New public server fn `resolveNearestBranch({ lat, lng })` → ranks active branches within `delivery_radius_km` using haversine; returns nearest + list of ranked matches.
+- If none in range: banner offers **Pickup** (sets branch, flags `mode=pickup` in `BranchContext`, waives delivery fee at checkout) or shows **"Coming soon to your area"** with email capture (writes to a lightweight `waitlist` table).
+- Checkout respects `mode=pickup`: hides address fields, sets `delivery_fee=0`, stores `fulfillment_type` on order (new nullable column).
 
-Security-definer helpers (avoid RLS recursion):
+## 4. Vendor dashboard completion
 
-- `is_restaurant_owner(_user, _restaurant)`
-- `is_branch_staff(_user, _branch)` / `is_branch_manager(...)`
-- `user_restaurants(_user)` returning restaurant ids
+New routes under `src/routes/_authenticated/vendor/`:
 
-RLS:
+- `vendor.products.tsx` — list/create/edit/delete foods scoped to owner's restaurants. Reuses `admin.foods` form logic, filtered by `restaurant_id`.
+- `vendor.categories.tsx` — same pattern against `categories` where `restaurant_id = owner's`.
+- `vendor.coupons.tsx` — CRUD on `coupons` where `restaurant_id` is theirs.
+- `vendor.staff.tsx` — assign users to branches (`branch_staff`) + set branch `manager_id`. Search users by email via a new `searchUsers` admin-only fn scoped to owner's branches.
+- `vendor.profile.tsx` — edit restaurant name, description, logo, cover, contact info, business hours, currency.
+- New server fns in `src/lib/vendor.functions.ts`: `upsertVendorFood`, `deleteVendorFood`, `upsertVendorCategory`, `deleteVendorCategory`, `upsertVendorCoupon`, `deleteVendorCoupon`, `assignBranchStaff`, `removeBranchStaff`, `updateRestaurantProfile`. Each verifies `is_restaurant_owner(userId, restaurantId)`.
+- Sidebar nav in `vendor.tsx` gets Products, Categories, Coupons, Staff, Profile entries.
 
-- Public can read `active` restaurants, branches, and their available products.
-- Owners manage their restaurant + child branches/products/coupons.
-- Branch managers manage their branch's inventory + orders.
-- Admins manage everything (existing pattern).
-- Every new public-schema table gets explicit GRANTs.
+## 5. Admin approval workflow + global analytics
 
-Backfill migration: create a "Royal Sweets" restaurant from current data, attach all existing foods/orders/coupons to it, create a default "Main Branch", populate `branch_inventory` for all foods.
+- `admin.restaurants.tsx` gets Pending tab + Approve/Reject buttons calling `setRestaurantStatus({ id, status })` (admin-only server fn).
+- Same for `admin.branches.tsx` (Pending → Active/Inactive).
+- New `admin.analytics.tsx` — cross-restaurant view: revenue by restaurant (30/90d), top restaurants by orders, top products platform-wide, active branches count, new signups. Backed by `getPlatformAnalytics` server fn (admin-gated).
+- Add nav entries in `admin.tsx` sidebar.
 
-## Phase 2 — Customer experience
+## 6. Analytics server fns (per-branch depth)
 
-- Geolocation prompt on home + menu (browser API, fallback to city dropdown).
-- Branch resolver: pick nearest active branch within delivery radius; if none, allow pickup or show "coming soon".
-- Branch switcher in header (when multiple available).
-- Menu/cart/checkout become branch-scoped: show only `branch_inventory.available` items, use price overrides, ETA, and delivery fee from the branch.
-- Restaurant landing pages at `/r/:slug` (public, SSR, OG metadata) and branch page at `/r/:slug/:branchCode`.
+Extend `src/lib/vendor.functions.ts`:
 
-## Phase 3 — Dashboards
+- `getBranchRevenueSeries({ restaurantId, days })` — daily revenue per branch (for a line chart in `vendor.analytics.tsx`).
+- `getBestSellersPerBranch({ restaurantId })` — top 10 products by qty per branch.
+- `getDeliveryPerformance({ restaurantId })` — avg prep + delivery minutes computed from `order_status_events` (placed → preparing, preparing → delivered).
+- `getRetention({ restaurantId })` — % of customers with ≥2 orders in last 90d.
+- Wire into `vendor.analytics.tsx` with tabs: Comparison (existing) · Revenue trend · Best sellers · Delivery · Retention. Use `recharts` (already in deps if present; else add).
 
-Vendor dashboard (`/_authenticated/vendor/...`) for `restaurant_owner`:
-
-- Restaurant profile, branches CRUD, staff assignment, products, categories, coupons, branch comparison analytics.
-
-Branch manager dashboard (`/_authenticated/branch/...`) for `branch_manager`:
-
-- Branch orders queue, status updates, inventory, branch reports, staff.
-
-Admin dashboard additions (`/_authenticated/admin/...`):
-
-- Restaurants list + approval (pending → active).
-- Branches list + approval.
-- Global analytics: revenue by restaurant, by branch, top products, retention.
-
-All new server functions use `requireSupabaseAuth` + role/ownership checks via the new security-definer helpers.
-
-## Phase 4 — Analytics
-
-Materialized helpers + server fns:
-
-- Revenue by restaurant / branch / day.
-- Best-selling products per branch.
-- Delivery performance (avg prep + delivery time from `order_status_events`).
-- Customer retention (repeat orders per restaurant).
-
-## Phase 5 — Future scalability hooks
-
-- `currency` on restaurant, `country` on branch — multi-currency display ready.
-- i18n dictionary already exists; new entities carry translatable name/description fields (jsonb `i18n` column on restaurants & branches) for future multilingual content.
-- Slug-based routing + pagination on listings so we scale to hundreds of branches.
-- No assumption of a single tenant anywhere in queries after Phase 1.
-
-## Backward compatibility
-
-- Existing routes (`/`, `/menu`, `/food/:id`, `/cart`, `/checkout`, `/orders`, admin) keep working.
-- When no branch is selected, default to the seeded Royal Sweets main branch.
-- Existing orders/foods/coupons are migrated, not replaced.
+---
 
 ## Technical notes
 
-- TanStack Start server fns for all writes; public reads via server publishable client where SSR is needed.
-- New protected layouts: `_authenticated/vendor/route.tsx`, `_authenticated/branch/route.tsx` with role checks in `beforeLoad`.
-- Geolocation done client-side; branch resolution is a public server fn taking `{lat, lng}` and returning ranked branches.
-- No edge functions; no service-role on client paths.
+- All new server fns follow the existing `.middleware([requireSupabaseAuth])` + role check pattern; admin fns check `has_role(userId,'admin')`, vendor fns check `is_restaurant_owner`, branch fns check `is_branch_manager`.
+- Public server fns for branch landing + nearest resolver use the **server publishable client** (no bearer), backed by narrow public SELECT policies already in place on `restaurants`, `branches`, `foods`, `categories`, `branch_inventory`.
+- One migration for: `orders.fulfillment_type text`, new `waitlist(email, city, created_at)` table with GRANTs + RLS (insert-only for anon), no schema changes to core tables.
+- No new deps except `recharts` if missing.
+- Backward compatible: existing routes untouched; new features are additive.
 
-## Rollout order (each step ships independently)
+## Rollout order
 
-1. Migration (Phase 1) — schema + backfill.
-2. Public branch resolver + branch switcher in header.
-3. Menu/cart/checkout become branch-aware.
-4. Vendor dashboard.
-5. Branch manager dashboard.
-6. Admin restaurant/branch management + analytics.
+1. Migration (fulfillment_type, waitlist) — 1 call.
+2. Multi-currency (small, pervasive — do early so new UI uses it).
+3. Per-branch landing pages.
+4. Geolocation + pickup fallback.
+5. Vendor dashboard completion.
+6. Admin approval + global analytics.
+7. Analytics server fns + charts.
 
-## Out of scope for now (call out so we agree)
+Each step is independently shippable. I'll batch parallel file writes per step to move fast.
 
-- Real polygon delivery zones (start with radius; jsonb column reserved).
-- Multi-currency conversion (display only, no FX).
-- Mobile native app changes.
-- Live payment provider integration per vendor (Stripe Connect-style) — current checkout flow preserved.
-
-Confirm and I'll start with Phase 1 (the migration) on the next turn.
+Confirm and I'll start with the migration + currency helper on the next turn.
