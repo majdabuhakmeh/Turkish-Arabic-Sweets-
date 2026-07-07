@@ -792,7 +792,7 @@ export const getDeliveryPerformance = createServerFn({ method: "GET" })
       .from("orders")
       .select("id, branch_id, status")
       .eq("restaurant_id", data.restaurantId)
-      .in("status", ["delivered", "out_for_delivery"]);
+      .in("status", ["delivered", "on_the_way"]);
     const orderIds = (orders ?? []).map((o) => o.id);
     if (!orderIds.length) return [];
     const { data: events } = await supabaseAdmin
