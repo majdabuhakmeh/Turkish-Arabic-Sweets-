@@ -45,6 +45,7 @@ import { Route as AuthenticatedAdminFoodsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated/admin.coupons'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminBranchesRouteImport } from './routes/_authenticated/admin.branches'
+import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 import { Route as AuthenticatedAdminRestaurantsIdRouteImport } from './routes/_authenticated/admin.restaurants.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -239,6 +240,12 @@ const AuthenticatedAdminBranchesRoute =
     path: '/branches',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAnalyticsRoute =
+  AuthenticatedAdminAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminRestaurantsIdRoute =
   AuthenticatedAdminRestaurantsIdRouteImport.update({
     id: '/$id',
@@ -265,6 +272,7 @@ export interface FileRoutesByFullPath {
   '/food/$id': typeof FoodIdRoute
   '/r/$slug': typeof RSlugRoute
   '/r/': typeof RIndexRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -300,6 +308,7 @@ export interface FileRoutesByTo {
   '/food/$id': typeof FoodIdRoute
   '/r/$slug': typeof RSlugRoute
   '/r': typeof RIndexRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -340,6 +349,7 @@ export interface FileRoutesById {
   '/food/$id': typeof FoodIdRoute
   '/r/$slug': typeof RSlugRoute
   '/r/': typeof RIndexRoute
+  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/branches': typeof AuthenticatedAdminBranchesRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
@@ -380,6 +390,7 @@ export interface FileRouteTypes {
     | '/food/$id'
     | '/r/$slug'
     | '/r/'
+    | '/admin/analytics'
     | '/admin/branches'
     | '/admin/categories'
     | '/admin/coupons'
@@ -415,6 +426,7 @@ export interface FileRouteTypes {
     | '/food/$id'
     | '/r/$slug'
     | '/r'
+    | '/admin/analytics'
     | '/admin/branches'
     | '/admin/categories'
     | '/admin/coupons'
@@ -454,6 +466,7 @@ export interface FileRouteTypes {
     | '/food/$id'
     | '/r/$slug'
     | '/r/'
+    | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/branches'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/coupons'
@@ -744,6 +757,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBranchesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/analytics': {
+      id: '/_authenticated/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/restaurants/$id': {
       id: '/_authenticated/admin/restaurants/$id'
       path: '/$id'
@@ -769,6 +789,7 @@ const AuthenticatedAdminRestaurantsRouteWithChildren =
   )
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminBranchesRoute: typeof AuthenticatedAdminBranchesRoute
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
@@ -781,6 +802,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
   AuthenticatedAdminBranchesRoute: AuthenticatedAdminBranchesRoute,
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
