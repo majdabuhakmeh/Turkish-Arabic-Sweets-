@@ -16,6 +16,7 @@ const nav: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/branches", label: "Branches", icon: Building2 },
   { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { to: "/admin/reports", label: "Reports", icon: BarChart3 },
+  { to: "/admin/analytics", label: "Platform analytics", icon: BarChart3 },
   { to: "/admin/foods", label: "Foods", icon: UtensilsCrossed },
   { to: "/admin/categories", label: "Categories", icon: Tags },
   { to: "/admin/coupons", label: "Coupons", icon: Ticket },

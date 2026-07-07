@@ -467,3 +467,114 @@ export const setUserPermission = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+/* ---------- Admin: branch status + platform analytics ---------- */
+
+export const setBranchStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z.object({ id: z.string().uuid(), status: z.enum(["pending", "active", "inactive"]) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { error } = await supabaseAdmin
+      .from("branches")
+      .update({ status: data.status })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const getPlatformAnalytics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ days: z.coerce.number().int().min(1).max(365).default(30) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const since = new Date(Date.now() - data.days * 86400_000).toISOString();
+
+    const [
+      { data: restaurants },
+      { data: branches },
+      { data: orders },
+      { data: items },
+      { count: totalCustomers },
+    ] = await Promise.all([
+      supabaseAdmin.from("restaurants").select("id, name, status"),
+      supabaseAdmin.from("branches").select("id, name, restaurant_id, status"),
+      supabaseAdmin
+        .from("orders")
+        .select("id, total, restaurant_id, status, created_at")
+        .gte("created_at", since),
+      supabaseAdmin
+        .from("order_items")
+        .select("name, qty, line_total, orders!inner(created_at)")
+        .gte("orders.created_at", since),
+      supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }),
+    ]);
+
+    const restList = restaurants ?? [];
+    const branchList = branches ?? [];
+    const o = orders ?? [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const it = (items ?? []) as any[];
+
+    const nameById = new Map(restList.map((r) => [r.id, r.name]));
+    const byRest = new Map<string, { name: string; orders: number; revenue: number }>();
+    for (const r of restList) byRest.set(r.id, { name: r.name, orders: 0, revenue: 0 });
+    for (const x of o) {
+      if (!x.restaurant_id) continue;
+      const cur = byRest.get(x.restaurant_id) ?? { name: nameById.get(x.restaurant_id) ?? "—", orders: 0, revenue: 0 };
+      cur.orders += 1;
+      if (x.status !== "cancelled") cur.revenue += Number(x.total);
+      byRest.set(x.restaurant_id, cur);
+    }
+
+    const topRestaurants = Array.from(byRest.entries())
+      .map(([id, v]) => ({ id, ...v }))
+      .sort((a, b) => b.revenue - a.revenue)
+      .slice(0, 10);
+
+    // Top products platform-wide
+    const dish = new Map<string, { qty: number; revenue: number }>();
+    for (const x of it) {
+      const cur = dish.get(x.name) ?? { qty: 0, revenue: 0 };
+      cur.qty += Number(x.qty);
+      cur.revenue += Number(x.line_total);
+      dish.set(x.name, cur);
+    }
+    const topProducts = Array.from(dish.entries())
+      .map(([name, v]) => ({ name, ...v }))
+      .sort((a, b) => b.qty - a.qty)
+      .slice(0, 10);
+
+    // Daily revenue
+    const days: string[] = [];
+    for (let i = data.days - 1; i >= 0; i--) days.push(new Date(Date.now() - i * 86400_000).toISOString().slice(0, 10));
+    const dayIdx = new Map(days.map((d, i) => [d, i]));
+    const dailyRevenue = days.map((day) => ({ day, revenue: 0 }));
+    for (const x of o) {
+      if (x.status === "cancelled") continue;
+      const key = String(x.created_at).slice(0, 10);
+      const idx = dayIdx.get(key);
+      if (idx == null) continue;
+      dailyRevenue[idx].revenue += Number(x.total);
+    }
+
+    return {
+      windowDays: data.days,
+      totals: {
+        restaurants: restList.length,
+        activeRestaurants: restList.filter((r) => r.status === "active").length,
+        pendingRestaurants: restList.filter((r) => r.status === "pending").length,
+        branches: branchList.length,
+        activeBranches: branchList.filter((b) => b.status === "active").length,
+        pendingBranches: branchList.filter((b) => b.status === "pending").length,
+        customers: totalCustomers ?? 0,
+        orders: o.length,
+        revenue: o.filter((x) => x.status !== "cancelled").reduce((s, x) => s + Number(x.total), 0),
+      },
+      topRestaurants,
+      topProducts,
+      dailyRevenue,
+    };
+  });
