@@ -229,3 +229,70 @@ export const getRestaurantMenu = createServerFn({ method: "GET" })
       foods: items,
     };
   });
+
+/** Public: full branch landing payload — restaurant, one branch (by code), categories, foods with branch overlay. */
+export const getBranchLanding = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ slug: z.string(), branchCode: z.string() }).parse(d))
+  .handler(async ({ data }) => {
+    const { data: restaurant } = await supabaseAdmin
+      .from("restaurants")
+      .select("id,name,slug,description,logo_url,cover_url,currency,contact_phone,contact_email,status")
+      .eq("slug", data.slug)
+      .eq("status", "active")
+      .maybeSingle();
+    if (!restaurant) return null;
+
+    const { data: branch } = await supabaseAdmin
+      .from("branches")
+      .select(
+        "id,restaurant_id,name,code,address,city,country,latitude,longitude,phone,opening_hours,delivery_radius_km,delivery_fee,min_order,eta_minutes,status",
+      )
+      .eq("restaurant_id", restaurant.id)
+      .eq("code", data.branchCode)
+      .eq("status", "active")
+      .maybeSingle();
+    if (!branch) return { restaurant, branch: null, categories: [], foods: [] };
+
+    const [{ data: categories }, { data: foods }, { data: invRows }] = await Promise.all([
+      supabaseAdmin
+        .from("categories")
+        .select("id,name,slug,image_url,sort_order")
+        .eq("restaurant_id", restaurant.id)
+        .order("sort_order", { ascending: true }),
+      supabaseAdmin
+        .from("foods")
+        .select("id,name,slug,description,price,image_url,category_slug,is_available,is_featured")
+        .eq("restaurant_id", restaurant.id)
+        .eq("is_available", true)
+        .order("created_at", { ascending: false }),
+      supabaseAdmin
+        .from("branch_inventory")
+        .select("food_id,available,price_override,stock")
+        .eq("branch_id", branch.id),
+    ]);
+
+    const inv: Record<string, { available: boolean; price_override: number | null; stock: number | null }> = {};
+    for (const r of invRows ?? []) {
+      inv[r.food_id] = {
+        available: !!r.available,
+        price_override: r.price_override == null ? null : Number(r.price_override),
+        stock: r.stock == null ? null : Number(r.stock),
+      };
+    }
+
+    const items = (foods ?? []).map((f) => {
+      const e = inv[f.id];
+      const available = e ? e.available && (e.stock == null || e.stock > 0) : true;
+      const effective_price = e?.price_override != null ? e.price_override : Number(f.price);
+      return {
+        ...f,
+        price: Number(f.price),
+        effective_price,
+        available,
+        stock: e?.stock ?? null,
+        price_override: e?.price_override ?? null,
+      };
+    });
+
+    return { restaurant, branch, categories: categories ?? [], foods: items };
+  });

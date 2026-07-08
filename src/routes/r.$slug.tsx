@@ -205,12 +205,21 @@ function RestaurantPage() {
                     )}
                   </div>
 
-                  <button
-                    onClick={() => visitMenu(b.id)}
-                    className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-foreground text-background h-11 text-sm font-medium hover:bg-primary transition-colors"
-                  >
-                    Order from this branch <ChevronRight className="size-4" />
-                  </button>
+                  <div className="mt-6 flex gap-2">
+                    <button
+                      onClick={() => visitMenu(b.id)}
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-foreground text-background h-11 text-sm font-medium hover:bg-primary transition-colors"
+                    >
+                      Order now
+                    </button>
+                    <Link
+                      to="/r/$slug/$branchCode"
+                      params={{ slug, branchCode: b.code }}
+                      className="inline-flex items-center justify-center gap-1 rounded-full border border-border h-11 px-4 text-sm font-medium hover:border-foreground transition-colors"
+                    >
+                      Details <ChevronRight className="size-4" />
+                    </Link>
+                  </div>
                 </div>
               );
             })}
