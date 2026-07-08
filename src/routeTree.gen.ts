@@ -31,6 +31,7 @@ import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedVendorIndexRouteImport } from './routes/_authenticated/vendor.index'
 import { Route as AuthenticatedBranchIndexRouteImport } from './routes/_authenticated/branch.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as RSlugBranchCodeRouteImport } from './routes/r.$slug.$branchCode'
 import { Route as AuthenticatedVendorBranchesRouteImport } from './routes/_authenticated/vendor.branches'
 import { Route as AuthenticatedVendorAnalyticsRouteImport } from './routes/_authenticated/vendor.analytics'
 import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated/orders.$id'
@@ -159,6 +160,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const RSlugBranchCodeRoute = RSlugBranchCodeRouteImport.update({
+  id: '/$branchCode',
+  path: '/$branchCode',
+  getParentRoute: () => RSlugRoute,
+} as any)
 const AuthenticatedVendorBranchesRoute =
   AuthenticatedVendorBranchesRouteImport.update({
     id: '/branches',
@@ -270,7 +276,7 @@ export interface FileRoutesByFullPath {
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/food/$id': typeof FoodIdRoute
-  '/r/$slug': typeof RSlugRoute
+  '/r/$slug': typeof RSlugRouteWithChildren
   '/r/': typeof RIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/branches': typeof AuthenticatedAdminBranchesRoute
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/vendor/analytics': typeof AuthenticatedVendorAnalyticsRoute
   '/vendor/branches': typeof AuthenticatedVendorBranchesRoute
+  '/r/$slug/$branchCode': typeof RSlugBranchCodeRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/branch/': typeof AuthenticatedBranchIndexRoute
   '/vendor/': typeof AuthenticatedVendorIndexRoute
@@ -306,7 +313,7 @@ export interface FileRoutesByTo {
   '/favorites': typeof AuthenticatedFavoritesRoute
   '/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/food/$id': typeof FoodIdRoute
-  '/r/$slug': typeof RSlugRoute
+  '/r/$slug': typeof RSlugRouteWithChildren
   '/r': typeof RIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/branches': typeof AuthenticatedAdminBranchesRoute
@@ -323,6 +330,7 @@ export interface FileRoutesByTo {
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/vendor/analytics': typeof AuthenticatedVendorAnalyticsRoute
   '/vendor/branches': typeof AuthenticatedVendorBranchesRoute
+  '/r/$slug/$branchCode': typeof RSlugBranchCodeRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/branch': typeof AuthenticatedBranchIndexRoute
   '/vendor': typeof AuthenticatedVendorIndexRoute
@@ -347,7 +355,7 @@ export interface FileRoutesById {
   '/_authenticated/orders': typeof AuthenticatedOrdersRouteWithChildren
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/food/$id': typeof FoodIdRoute
-  '/r/$slug': typeof RSlugRoute
+  '/r/$slug': typeof RSlugRouteWithChildren
   '/r/': typeof RIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/branches': typeof AuthenticatedAdminBranchesRoute
@@ -364,6 +372,7 @@ export interface FileRoutesById {
   '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/_authenticated/vendor/analytics': typeof AuthenticatedVendorAnalyticsRoute
   '/_authenticated/vendor/branches': typeof AuthenticatedVendorBranchesRoute
+  '/r/$slug/$branchCode': typeof RSlugBranchCodeRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/branch/': typeof AuthenticatedBranchIndexRoute
   '/_authenticated/vendor/': typeof AuthenticatedVendorIndexRoute
@@ -405,6 +414,7 @@ export interface FileRouteTypes {
     | '/orders/$id'
     | '/vendor/analytics'
     | '/vendor/branches'
+    | '/r/$slug/$branchCode'
     | '/admin/'
     | '/branch/'
     | '/vendor/'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/orders/$id'
     | '/vendor/analytics'
     | '/vendor/branches'
+    | '/r/$slug/$branchCode'
     | '/admin'
     | '/branch'
     | '/vendor'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/_authenticated/orders/$id'
     | '/_authenticated/vendor/analytics'
     | '/_authenticated/vendor/branches'
+    | '/r/$slug/$branchCode'
     | '/_authenticated/admin/'
     | '/_authenticated/branch/'
     | '/_authenticated/vendor/'
@@ -499,7 +511,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   FoodIdRoute: typeof FoodIdRoute
-  RSlugRoute: typeof RSlugRoute
+  RSlugRoute: typeof RSlugRouteWithChildren
   RIndexRoute: typeof RIndexRoute
 }
 
@@ -658,6 +670,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/r/$slug/$branchCode': {
+      id: '/r/$slug/$branchCode'
+      path: '/$branchCode'
+      fullPath: '/r/$slug/$branchCode'
+      preLoaderRoute: typeof RSlugBranchCodeRouteImport
+      parentRoute: typeof RSlugRoute
     }
     '/_authenticated/vendor/branches': {
       id: '/_authenticated/vendor/branches'
@@ -883,6 +902,16 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface RSlugRouteChildren {
+  RSlugBranchCodeRoute: typeof RSlugBranchCodeRoute
+}
+
+const RSlugRouteChildren: RSlugRouteChildren = {
+  RSlugBranchCodeRoute: RSlugBranchCodeRoute,
+}
+
+const RSlugRouteWithChildren = RSlugRoute._addFileChildren(RSlugRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -895,7 +924,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   FoodIdRoute: FoodIdRoute,
-  RSlugRoute: RSlugRoute,
+  RSlugRoute: RSlugRouteWithChildren,
   RIndexRoute: RIndexRoute,
 }
 export const routeTree = rootRouteImport
