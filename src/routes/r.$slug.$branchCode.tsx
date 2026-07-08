@@ -138,12 +138,20 @@ function BranchLandingPage() {
               Branch code · {branch.code}
             </p>
           </div>
-          <button
-            onClick={() => navigate({ to: "/menu" })}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-foreground text-background h-12 px-6 text-sm font-medium hover:bg-primary transition-colors"
-          >
-            Order from this branch <ChevronRight className="size-4" />
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={() => navigate({ to: "/checkout" })}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground h-12 px-6 text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              Order from this branch <ChevronRight className="size-4" />
+            </button>
+            <button
+              onClick={() => navigate({ to: "/menu" })}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-border h-12 px-6 text-sm font-medium hover:border-foreground transition-colors"
+            >
+              Browse menu
+            </button>
+          </div>
         </div>
 
         {/* Info cards */}
