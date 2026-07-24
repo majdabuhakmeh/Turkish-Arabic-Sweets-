@@ -4,7 +4,8 @@ import { ArrowRight, Clock, Sparkles, Leaf, Star, Plus } from "lucide-react";
 import floatAsset from "@/assets/sweet-baklava-pistachio.jpg.asset.json";
 import kunafaTrayImg from "@/assets/كنافة نابلسية.jpg";
 import baklavaTrayImg from "@/assets/baqlwa.jpg";
-import kellajTrayImg from "@/assets/معمول.jpg";
+import heroImg from "@/assets/2f6780e5f5afc8078f73dc5209196b6c.jpg";
+import kellajTrayImg from "@/assets/kolaj.jpg";
 import maamoulDateImg from "@/assets/معمول بالتمر.jpg";
 import maamoulPistachioImg from "@/assets/معمول بالفستق.jpg";
 import { foods, categories, localizedCategoryName, localizedFood } from "@/lib/foods";
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:title", content: "Royal Sweets — حلويات الملكي" },
       { property: "og:description", content: "Handcrafted baklava, kunafa & Levantine pastries from Al-Sumou. Boxed with care, delivered fresh." },
-      { property: "og:image", content: baklavaTrayImg },
+      { property: "og:image", content: heroImg },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -84,7 +85,7 @@ function Home() {
       {/* HERO */}
       <section
         className="relative overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: `url(${baklavaTrayImg})` }}
+        style={{ backgroundImage: `url(${heroImg})` }}
       >
         <div
           className="absolute inset-0"
@@ -157,8 +158,8 @@ function Home() {
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-square rounded-[2.5rem] overflow-hidden shadow-warm">
               <img
-                src={baklavaTrayImg}
-                alt="Royal Sweets pistachio baklava"
+                src={heroImg}
+                alt="Royal Sweets tray assortment"
                 className="size-full object-cover"
                 loading="eager"
               />
