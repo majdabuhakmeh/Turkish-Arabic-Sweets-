@@ -1,14 +1,14 @@
 import baklavaPistachioImg from "@/assets/baklava2.jpg";
 import kunafaCheeseImg from "@/assets/knafeh 2.jpg";
-import kunafaNaamehAsset from "@/assets/sweet-kunafa-naameh.jpg.asset.json";
+import kunafaNaamehImg from "@/assets/كنافة نابلسية.jpg";
 import harissaImg from "@/assets/هريسة بالقشطة.jpg";
-import mafroukehAsset from "@/assets/sweet-mafroukeh.jpg.asset.json";
+import mafroukehImg from "@/assets/مفروكة.jpg";
 import fingerBaklavaImg from "@/assets/اصابع بالفستق.jpg";
-import baklavaRollsAsset from "@/assets/sweet-baklava-rolls.jpg.asset.json";
-import warbatAsset from "@/assets/sweet-warbat.jpg.asset.json";
-import almondBaklavaAsset from "@/assets/sweet-almond-baklava.jpg.asset.json";
-import layaliAsset from "@/assets/sweet-layali.jpg.asset.json";
-import kunafaSliceAsset from "@/assets/sweet-kunafa-slice.jpg.asset.json";
+import baklavaRollsImg from "@/assets/برمة.jpg";
+import warbatImg from "@/assets/kolaj.jpg";
+import almondBaklavaImg from "@/assets/اصابع باللوز.jpg";
+import layaliImg from "@/assets/ليالي-لبنان.jpg";
+import kunafaSliceImg from "@/assets/كنافة-مبرومة.jpg";
 import trayAssortmentImg from "@/assets/طبق مشل.jpg";
 
 export type Food = {
@@ -29,6 +29,7 @@ export type Food = {
   reviews: number;
   spice: 0 | 1 | 2 | 3;
   ingredients: string[];
+  ingredientsAr?: string[];
   popular?: boolean;
   featured?: boolean;
 };
@@ -63,6 +64,7 @@ export const foods: Food[] = [
     reviews: 412,
     spice: 0,
     ingredients: ["Phyllo", "Aleppo pistachio", "Clarified butter", "Rose-water syrup"],
+    ingredientsAr: ["فيلو", "فستق حلبي", "سمن بلدي", "قطر ماء الورد"],
     featured: true,
     popular: true,
   },
@@ -77,7 +79,7 @@ export const foods: Food[] = [
     descriptionAr:
       "شعيرات السميد المسحوبة يدوياً فوق جبنة العكاوي الطازجة، تُخبز حتى الذهبي ثم تُغمر بقطر ماء الزهر الدافئ وتُرشّ بالفستق.",
     price: 32,
-    image: kunafaCheeseImg,
+    image: kunafaNaamehImg,
     category: "kunafa",
     prepTime: 18,
     calories: 480,
@@ -85,6 +87,7 @@ export const foods: Food[] = [
     reviews: 358,
     spice: 0,
     ingredients: ["Semolina", "Akkawi cheese", "Orange-blossom syrup", "Pistachio"],
+    ingredientsAr: ["سميد", "جبنة عكاوي", "قطر ماء الزهر", "فستق"],
     featured: true,
     popular: true,
   },
@@ -99,7 +102,7 @@ export const foods: Food[] = [
     descriptionAr:
       "كنافتنا الناعمة المميّزة — طبقة مخمليّة من الشعيرات الرقيقة مع القشطة وكرزة مسكّرة في الأعلى. تُغلَّف دافئة.",
     price: 36,
-    image: kunafaNaamehAsset.url,
+    image: kunafaCheeseImg,
     category: "kunafa",
     prepTime: 20,
     calories: 420,
@@ -107,6 +110,7 @@ export const foods: Food[] = [
     reviews: 287,
     spice: 0,
     ingredients: ["Fine kataifi", "Ashta cream", "Candied cherry", "Pistachio"],
+    ingredientsAr: ["شعيرية ناعمة", "قشطة", "كرز مسكّر", "فستق"],
     featured: true,
   },
   {
@@ -128,6 +132,7 @@ export const foods: Food[] = [
     reviews: 192,
     spice: 0,
     ingredients: ["Semolina", "Ashta cream", "Lemon syrup", "Pistachio"],
+    ingredientsAr: ["سميد", "قشطة", "قطر ليمون", "فستق"],
     popular: true,
   },
   {
@@ -141,7 +146,7 @@ export const foods: Food[] = [
     descriptionAr:
       "عجينة السميد المفتّتة بالسمن، طبقة من القشطة الكثيفة ومغطاة بالفستق المطحون ناعماً.",
     price: 34,
-    image: mafroukehAsset.url,
+    image: mafroukehImg,
     category: "cakes",
     prepTime: 22,
     calories: 410,
@@ -149,6 +154,7 @@ export const foods: Food[] = [
     reviews: 156,
     spice: 0,
     ingredients: ["Semolina", "Ghee", "Ashta", "Pistachio"],
+    ingredientsAr: ["سميد", "سمن", "قشطة", "فستق"],
     featured: true,
   },
   {
@@ -170,6 +176,7 @@ export const foods: Food[] = [
     reviews: 203,
     spice: 0,
     ingredients: ["Kataifi", "Pistachio", "Sugar syrup", "Butter"],
+    ingredientsAr: ["كنافة شعيرية", "فستق", "قطر سكر", "زبدة"],
     popular: true,
   },
   {
@@ -183,7 +190,7 @@ export const foods: Food[] = [
     descriptionAr:
       "لفائف فيلو محكمة محشوّة بسخاءٍ بالفستق — تُقطَّع لتُظهر لونها الأخضر النابض.",
     price: 42,
-    image: baklavaRollsAsset.url,
+    image: baklavaRollsImg,
     category: "baklava",
     prepTime: 20,
     calories: 340,
@@ -191,6 +198,7 @@ export const foods: Food[] = [
     reviews: 178,
     spice: 0,
     ingredients: ["Phyllo", "Pistachio", "Ghee", "Syrup"],
+    ingredientsAr: ["فيلو", "فستق", "سمن", "قطر"],
   },
   {
     id: "warbat",
@@ -203,7 +211,7 @@ export const foods: Food[] = [
     descriptionAr:
       "مثلّثات فيلو مقرمشة بقلبٍ سخيّ من القشطة الطازجة — وتُرشّ بالفستق المهروس.",
     price: 30,
-    image: warbatAsset.url,
+    image: warbatImg,
     category: "warbat",
     prepTime: 16,
     calories: 290,
@@ -211,6 +219,7 @@ export const foods: Food[] = [
     reviews: 142,
     spice: 0,
     ingredients: ["Phyllo", "Ashta", "Pistachio", "Syrup"],
+    ingredientsAr: ["فيلو", "قشطة", "فستق", "قطر"],
   },
   {
     id: "almond-baklava",
@@ -223,7 +232,7 @@ export const foods: Food[] = [
     descriptionAr:
       "أصابع فيلو على شكل المحار محشوّة بالقشدة الحلوة، ومزيّنة بحبّة لوزٍ محمّصة.",
     price: 36,
-    image: almondBaklavaAsset.url,
+    image: almondBaklavaImg,
     category: "baklava",
     prepTime: 18,
     calories: 310,
@@ -231,6 +240,7 @@ export const foods: Food[] = [
     reviews: 134,
     spice: 0,
     ingredients: ["Phyllo", "Almond", "Cream", "Syrup"],
+    ingredientsAr: ["فيلو", "لوز", "قشدة", "قطر"],
   },
   {
     id: "layali-lubnan",
@@ -243,7 +253,7 @@ export const foods: Food[] = [
     descriptionAr:
       "مهلبيّة السميد الباردة مع طبقة من القشطة ومُروّاة بقطر ماء الورد والفستق.",
     price: 24,
-    image: layaliAsset.url,
+    image: layaliImg,
     category: "cakes",
     prepTime: 12,
     calories: 240,
@@ -251,6 +261,7 @@ export const foods: Food[] = [
     reviews: 98,
     spice: 0,
     ingredients: ["Semolina", "Ashta", "Rose water", "Pistachio"],
+    ingredientsAr: ["سميد", "قشطة", "ماء ورد", "فستق"],
   },
   {
     id: "kunafa-slice",
@@ -263,7 +274,7 @@ export const foods: Food[] = [
     descriptionAr:
       "كنافة ملفوفة مقرمشة، تُقطَّع لتكشف قلباً سخيّاً من الفستق، وتُدهن بقطر خفيف.",
     price: 34,
-    image: kunafaSliceAsset.url,
+    image: kunafaSliceImg,
     category: "kunafa",
     prepTime: 18,
     calories: 380,
@@ -271,6 +282,7 @@ export const foods: Food[] = [
     reviews: 167,
     spice: 0,
     ingredients: ["Kunafa threads", "Pistachio", "Butter", "Syrup"],
+    ingredientsAr: ["شعيرية كنافة", "فستق", "زبدة", "قطر"],
   },
   {
     id: "royal-tray",
@@ -292,6 +304,7 @@ export const foods: Food[] = [
     reviews: 261,
     spice: 0,
     ingredients: ["Pistachio", "Almond", "Cashew", "Ashta", "Phyllo", "Kataifi"],
+    ingredientsAr: ["فستق", "لوز", "كاجو", "قشطة", "فيلو", "كنافة شعيرية"],
     featured: true,
     popular: true,
   },
@@ -305,9 +318,10 @@ export function localizedFood(f: Food, locale: "en" | "ar") {
       name: f.nameAr ?? f.name,
       tagline: f.taglineAr ?? f.tagline,
       description: f.descriptionAr ?? f.description,
+      ingredients: f.ingredientsAr ?? f.ingredients,
     };
   }
-  return { name: f.name, tagline: f.tagline, description: f.description };
+  return { name: f.name, tagline: f.tagline, description: f.description, ingredients: f.ingredients };
 }
 
 export function localizedCategoryName(

@@ -18,13 +18,13 @@ export function FoodCard({ food }: { food: Food }) {
   const available = isAvailable(food.id);
   const discounted = price < food.price;
   return (
-    <article className="group relative">
+    <article className="group relative h-full">
       <Link
         to="/food/$id"
         params={{ id: food.id }}
-        className="block overflow-hidden rounded-3xl bg-card shadow-soft transition-transform duration-500 hover:-translate-y-1"
+        className="flex h-full flex-col overflow-hidden rounded-3xl bg-card shadow-soft transition-transform duration-500 hover:-translate-y-1"
       >
-        <div className="relative aspect-[4/5] overflow-hidden">
+        <div className="relative aspect-[4/5] shrink-0 overflow-hidden">
           <img
             src={food.image}
             alt={l.name}
@@ -50,9 +50,9 @@ export function FoodCard({ food }: { food: Food }) {
             {food.rating}
           </div>
         </div>
-        <div className="p-6">
+        <div className="p-6 pb-16">
           <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-display text-2xl leading-tight">{l.name}</h3>
+            <h3 className="font-display text-2xl leading-tight line-clamp-2">{l.name}</h3>
             <div className="text-right">
               {discounted ? (
                 <div className="text-xs text-muted-foreground line-through">${food.price}</div>

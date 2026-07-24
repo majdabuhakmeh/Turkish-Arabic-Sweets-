@@ -71,7 +71,10 @@ export function Header() {
       </div>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side={dir === "rtl" ? "left" : "right"} className="flex flex-col gap-0 p-0">
+        <SheetContent
+          side={dir === "rtl" ? "left" : "right"}
+          className="flex flex-col gap-0 p-0 data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0"
+        >
           <SheetTitle className="sr-only">{t("nav.menuLabel")}</SheetTitle>
           <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-8">
             <nav className="flex flex-col gap-1">

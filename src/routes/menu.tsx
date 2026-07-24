@@ -16,7 +16,7 @@ export const Route = createFileRoute("/menu")({
   head: () => ({
     meta: [
       { title: "Menu — Royal Sweets" },
-      { name: "description", content: "Browse our full menu of wood-fired pizzas, smash burgers, hand-cut pasta, shawarma, salads and desserts." },
+      { name: "description", content: "Browse our full menu of handcrafted baklava, kunafa, and Levantine pastries." },
     ],
   }),
   component: MenuPage,
@@ -58,7 +58,7 @@ function MenuPage() {
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm">
               <MapPin className="size-4 text-primary" />
-              <span className="text-muted-foreground">Showing menu for</span>
+              <span className="text-muted-foreground">{t("menu.showingFor")}</span>
               <span className="font-medium">{selected.name}</span>
               {selected.city && <span className="text-muted-foreground">· {selected.city}</span>}
             </div>

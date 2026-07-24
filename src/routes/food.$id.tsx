@@ -1,8 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Clock, Flame, Minus, Plus, Star } from "lucide-react";
-import { getFood } from "@/lib/foods";
+import { getFood, categories, localizedFood, localizedCategoryName } from "@/lib/foods";
 import { useCart } from "@/context/cart";
+import { useI18n, useT } from "@/context/i18n";
 import { FoodReviews } from "@/components/FoodReviews";
 
 export const Route = createFileRoute("/food/$id")({
@@ -22,18 +23,25 @@ export const Route = createFileRoute("/food/$id")({
         }
       : {},
   component: FoodPage,
-  notFoundComponent: () => (
-    <div className="mx-auto max-w-2xl px-6 py-32 text-center">
-      <h1 className="font-display text-5xl">Dish not found</h1>
-      <Link to="/menu" className="mt-6 inline-block text-primary">Back to menu</Link>
-    </div>
-  ),
+  notFoundComponent: () => {
+    const t = useT();
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-32 text-center">
+        <h1 className="font-display text-5xl">{t("food.notFound")}</h1>
+        <Link to="/menu" className="mt-6 inline-block text-primary">{t("food.backToMenu")}</Link>
+      </div>
+    );
+  },
 });
 
 function FoodPage() {
   const { food } = Route.useLoaderData();
   const { add } = useCart();
   const [qty, setQty] = useState(1);
+  const t = useT();
+  const { locale } = useI18n();
+  const l = localizedFood(food, locale);
+  const category = categories.find((c) => c.id === food.category);
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12">
@@ -41,7 +49,7 @@ function FoodPage() {
         to="/menu"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
       >
-        <ArrowLeft className="size-4" /> Back to menu
+        <ArrowLeft className="size-4 rtl:rotate-180" /> {t("food.backToMenu")}
       </Link>
 
       <div className="mt-8 grid lg:grid-cols-2 gap-12 lg:gap-20">
@@ -49,7 +57,7 @@ function FoodPage() {
           <div className="aspect-square rounded-[2.5rem] overflow-hidden shadow-warm">
             <img
               src={food.image}
-              alt={food.name}
+              alt={l.name}
               width={1000}
               height={1000}
               className="size-full object-cover"
@@ -63,10 +71,10 @@ function FoodPage() {
 
         <div>
           <span className="text-xs uppercase tracking-[0.25em] text-primary">
-            {food.category}
+            {category ? localizedCategoryName(category, locale) : food.category}
           </span>
-          <h1 className="mt-3 font-display text-6xl leading-none">{food.name}</h1>
-          <p className="mt-3 text-lg text-muted-foreground">{food.tagline}</p>
+          <h1 className="mt-3 font-display text-6xl leading-none">{l.name}</h1>
+          <p className="mt-3 text-lg text-muted-foreground">{l.tagline}</p>
 
           <div className="mt-8 flex items-baseline gap-3">
             <span className="font-display text-5xl text-primary">${food.price}</span>
@@ -79,23 +87,23 @@ function FoodPage() {
 
           <div className="mt-8 flex gap-6 text-sm">
             <span className="inline-flex items-center gap-2">
-              <Clock className="size-4 text-primary" /> {food.prepTime} min
+              <Clock className="size-4 text-primary" /> {food.prepTime} {t("card.min")}
             </span>
             <span className="inline-flex items-center gap-2">
               <Flame className="size-4 text-primary" />
-              {["Mild", "Medium", "Hot", "Fire"][food.spice]}
+              {t(`food.spice.${food.spice}`)}
             </span>
-            <span>{food.calories} cal</span>
+            <span>{food.calories} {t("card.cal")}</span>
           </div>
 
-          <p className="mt-8 text-foreground/80 leading-relaxed">{food.description}</p>
+          <p className="mt-8 text-foreground/80 leading-relaxed">{l.description}</p>
 
           <div className="mt-8">
             <h3 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">
-              Ingredients
+              {t("food.ingredients")}
             </h3>
             <div className="flex flex-wrap gap-2">
-              {food.ingredients.map((i: string) => (
+              {l.ingredients.map((i: string) => (
                 <span
                   key={i}
                   className="rounded-full bg-card border border-border px-3 py-1 text-sm"
@@ -111,7 +119,7 @@ function FoodPage() {
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 className="size-14 grid place-items-center hover:text-primary"
-                aria-label="Decrease"
+                aria-label={t("food.decrease")}
               >
                 <Minus className="size-4" />
               </button>
@@ -119,7 +127,7 @@ function FoodPage() {
               <button
                 onClick={() => setQty((q) => q + 1)}
                 className="size-14 grid place-items-center hover:text-primary"
-                aria-label="Increase"
+                aria-label={t("food.increase")}
               >
                 <Plus className="size-4" />
               </button>
@@ -128,7 +136,7 @@ function FoodPage() {
               onClick={() => add(food.id, qty)}
               className="flex-1 h-14 rounded-full bg-primary text-primary-foreground font-medium shadow-warm hover:bg-primary/90 transition-colors"
             >
-              Add {qty} to bag — ${(food.price * qty).toFixed(2)}
+              {t("food.add")} {qty} {t("food.toBag")} — ${(food.price * qty).toFixed(2)}
             </button>
           </div>
         </div>

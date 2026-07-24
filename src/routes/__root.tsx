@@ -15,6 +15,7 @@ import { I18nProvider } from "@/context/i18n";
 import { FavoritesProvider } from "@/context/favorites";
 import { BranchProvider } from "@/context/branch";
 import { Toaster } from "@/components/ui/sonner";
+import { PromoToast } from "@/components/PromoToast";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
@@ -150,6 +151,7 @@ function RootComponent() {
               <Footer />
             </div>
             <Toaster />
+            <PromoToast />
           </CartProvider>
           </BranchProvider>
           </FavoritesProvider>

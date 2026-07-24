@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Clock, Sparkles, Leaf, Star, Plus } from "lucide-react";
 import heroAsset from "@/assets/hero.jpg";
-import floatAsset from "@/assets/baklava2.jpg";
 import kunafaTrayImg from "@/assets/كنافة نابلسية.jpg";
 import baklavaTrayImg from "@/assets/baqlwa.jpg";
 import kellajTrayImg from "@/assets/kolaj.jpg";
@@ -168,18 +167,19 @@ function Home() {
               </p>
               <p className="mt-2 text-xs text-muted-foreground">{t("home.reviewBy")}</p>
             </div>
-            {/* Floating special card */}
-            <div className="hidden md:block absolute -right-4 top-10 rtl:right-auto rtl:-left-4 bg-card rounded-2xl p-3 shadow-soft border border-border">
-              <div className="flex items-center gap-3">
-                <img src={floatAsset} alt="" className="size-14 rounded-xl object-cover" />
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                    {t("home.todaysSpecial")}
+            {/* Floating special card — temporarily hidden, set to true to bring back */}
+            {false && (
+              <div className="hidden md:block absolute -right-4 top-10 rtl:right-auto rtl:-left-4 bg-card rounded-2xl p-3 shadow-soft border border-border">
+                <div className="flex items-center gap-3">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                      {t("home.todaysSpecial")}
+                    </div>
+                    <div className="font-display text-xl leading-tight">{t("home.specialOffer")}</div>
                   </div>
-                  <div className="font-display text-xl leading-tight">{t("home.specialOffer")}</div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
         {/* decorative gold blobs */}
