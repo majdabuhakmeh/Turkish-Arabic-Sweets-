@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import heroAsset from "@/assets/sweet-tray-assortment.jpg.asset.json";
 import storyAsset from "@/assets/sweet-baklava-tray.jpg.asset.json";
+import { useT } from "@/context/i18n";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -18,42 +19,31 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+  const t = useT();
   return (
     <div>
       <section className="mx-auto max-w-4xl px-6 py-24 text-center">
-        <span className="text-xs uppercase tracking-[0.25em] text-primary">Our story</span>
+        <span className="text-xs uppercase tracking-[0.25em] text-primary">{t("about.kicker")}</span>
         <h1 className="mt-4 font-display text-6xl lg:text-8xl leading-[0.95] text-balance">
-          A family kitchen, <em className="text-primary not-italic">centuries</em> of taste.
+          {t("about.titleA")} <em className="text-primary not-italic">{t("about.titleEm")}</em> {t("about.titleB")}
         </h1>
         <p className="mt-8 text-lg text-muted-foreground leading-relaxed">
-          Royal Sweets began in a small kitchen in Al-Sumou, with one mission:
-          to honor the Levantine art of confectionery — every sheet of phyllo
-          rolled by hand, every nut hand-cracked, every tray scented with rose
-          water and orange blossom the way our grandmothers taught us.
+          {t("about.intro")}
         </p>
       </section>
       <section className="mx-auto max-w-6xl px-6">
         <div className="aspect-[16/9] rounded-[2.5rem] overflow-hidden shadow-warm">
-          <img src={heroAsset.url} alt="A presentation tray of Royal Sweets" className="size-full object-cover" />
+          <img src={heroAsset.url} alt={t("about.imageAlt1")} className="size-full object-cover" />
         </div>
       </section>
       <section className="mx-auto max-w-3xl px-6 py-24 space-y-8 text-lg leading-relaxed text-foreground/85">
-        <p>
-          We believe the finest sweets come from the simplest ingredients, treated
-          with absurd attention. The clearest clarified butter. Whole Aleppo
-          pistachios. Akkawi cheese desalinated overnight. A syrup that sings
-          of orange blossom, not sugar.
-        </p>
+        <p>{t("about.body1")}</p>
         <div className="aspect-[4/3] my-12 rounded-[2rem] overflow-hidden shadow-soft">
-          <img src={storyAsset.url} alt="Fresh baklava on the tray" className="size-full object-cover" />
+          <img src={storyAsset.url} alt={t("about.imageAlt2")} className="size-full object-cover" />
         </div>
-        <p>
-          Every piece you receive was rolled, layered and baked the same day. We
-          deliver fresh from the boutique on Al-Sumou Center — and every gift
-          box leaves with our crown seal.
-        </p>
+        <p>{t("about.body2")}</p>
         <p className="font-display text-3xl text-primary not-italic">
-          Come hungry. Leave like royalty.
+          {t("about.closing")}
         </p>
       </section>
     </div>

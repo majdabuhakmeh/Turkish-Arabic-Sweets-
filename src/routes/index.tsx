@@ -1,9 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Clock, Sparkles, Leaf, Star } from "lucide-react";
-import heroAsset from "@/assets/sweet-kunafa-cream.jpg.asset.json";
+import { useState } from "react";
+import { ArrowRight, Clock, Sparkles, Leaf, Star, Plus } from "lucide-react";
 import floatAsset from "@/assets/sweet-baklava-pistachio.jpg.asset.json";
-import { foods, categories, localizedCategoryName } from "@/lib/foods";
-import { FoodCard } from "@/components/FoodCard";
+import kunafaTrayImg from "@/assets/كنافة نابلسية.jpg";
+import baklavaTrayImg from "@/assets/baqlwa.jpg";
+import kellajTrayImg from "@/assets/معمول.jpg";
+import maamoulDateImg from "@/assets/معمول بالتمر.jpg";
+import maamoulPistachioImg from "@/assets/معمول بالفستق.jpg";
+import { foods, categories, localizedCategoryName, localizedFood } from "@/lib/foods";
+import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { NearestBranchBanner } from "@/components/NearestBranchBanner";
 
@@ -18,7 +23,7 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:title", content: "Royal Sweets — حلويات الملكي" },
       { property: "og:description", content: "Handcrafted baklava, kunafa & Levantine pastries from Al-Sumou. Boxed with care, delivered fresh." },
-      { property: "og:image", content: heroAsset.url },
+      { property: "og:image", content: baklavaTrayImg },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -27,32 +32,96 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const featured = foods.filter((f) => f.featured);
   const popular = foods.filter((f) => f.popular);
   const t = useT();
   const { locale } = useI18n();
+  const { add } = useCart();
+  const popularTempImages = [
+    kunafaTrayImg,
+    baklavaTrayImg,
+    kellajTrayImg,
+    maamoulDateImg,
+    maamoulPistachioImg,
+  ];
+  const [hoveredTray, setHoveredTray] = useState<string | null>(null);
+
+  const trays = [
+    {
+      key: "kunafa",
+      foodId: "kunafa-cheese",
+      image: kunafaTrayImg,
+      name: locale === "ar" ? "كنافة نابلسية" : "Kunafa Nabulsiya",
+      desc:
+        locale === "ar"
+          ? "جبنة عكاوي طازجة، قطر بماء الورد، وطبقة قطايف مقرمشة محمّرة بالسمن البلدي."
+          : "Fresh akkawi cheese, rose-water syrup, and a crisp semolina crust browned in clarified butter.",
+    },
+    {
+      key: "baklava",
+      foodId: "baklava-pistachio",
+      image: baklavaTrayImg,
+      name: locale === "ar" ? "بقلاوة بالفستق" : "Pistachio Baklava",
+      desc:
+        locale === "ar"
+          ? "أربعون طبقة فيلو رقيقة، فستق حلبي مطحون، وقطر عسل مركّز."
+          : "Forty paper-thin phyllo layers, crushed Aleppo pistachio, and concentrated honey syrup.",
+    },
+    {
+      key: "kellaj",
+      foodId: "warbat",
+      image: kellajTrayImg,
+      name: locale === "ar" ? "كلاج" : "Kellaj",
+      desc:
+        locale === "ar"
+          ? "عجينة كلاج مقرمشة محشوّة جوز أو جبنة، مقليّة ذهبية ومغمّسة بالقطر."
+          : "Crisp kellaj pastry filled with walnut or cheese, fried golden and dipped in syrup.",
+    },
+  ];
+  const activeTray = trays.find((tr) => tr.key === hoveredTray);
 
   return (
     <div>
       {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-6 pt-12 pb-24 lg:pt-20 lg:pb-32 grid lg:grid-cols-12 gap-12 items-center">
+      <section
+        className="relative overflow-hidden bg-cover bg-center"
+        style={{ backgroundImage: `url(${baklavaTrayImg})` }}
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,var(--hero-overlay-top)) 0%, rgba(0,0,0,var(--hero-overlay-bottom)) 100%)",
+          }}
+        />
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-8 pb-14 lg:pt-12 lg:pb-16 grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 relative z-10">
-            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-card px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-primary">
+            <span
+              className="animate-hero-in inline-flex items-center gap-2 rounded-full border border-background/30 bg-background/10 px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-background backdrop-blur"
+              style={{ animationDelay: "0s" }}
+            >
               <span className="size-1.5 rounded-full bg-primary animate-pulse" />
               {t("header.openNow")}
             </span>
-            <h1 className="mt-8 font-display text-6xl sm:text-7xl lg:text-[7.5rem] leading-[0.95] text-balance">
+            <h1
+              className="animate-hero-in mt-6 font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] text-balance text-background"
+              style={{ animationDelay: "0.2s" }}
+            >
               {t("home.h1.line1")}
               <br />
               <span className="italic text-primary">{t("home.h1.line2")}</span>
               <br />
               {t("home.h1.line3")}
             </h1>
-            <p className="mt-8 max-w-md text-lg text-muted-foreground leading-relaxed">
+            <p
+              className="animate-hero-in mt-8 max-w-md text-lg text-background/80 leading-relaxed"
+              style={{ animationDelay: "0.4s" }}
+            >
               {t("home.intro")}
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div
+              className="animate-hero-in mt-10 flex flex-wrap items-center gap-4"
+              style={{ animationDelay: "0.6s" }}
+            >
               <Link
                 to="/menu"
                 className="group inline-flex items-center gap-3 rounded-full gradient-warm text-primary-foreground px-7 h-14 text-base font-medium shadow-warm hover:opacity-95 transition-all"
@@ -62,19 +131,22 @@ function Home() {
               </Link>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 h-14 px-6 text-base font-medium text-foreground hover:text-primary transition-colors"
+                className="inline-flex items-center gap-2 h-14 px-6 text-base font-medium text-background hover:text-primary transition-colors"
               >
                 {t("home.ourStory")}
               </Link>
             </div>
 
-            <div className="mt-14 grid grid-cols-3 gap-6 max-w-md">
+            <div
+              className="animate-hero-in mt-14 grid grid-cols-3 gap-6 max-w-md"
+              style={{ animationDelay: "0.8s" }}
+            >
               {[
                 { icon: Clock, label: t("home.feature.delivery") },
                 { icon: Sparkles, label: t("home.feature.fire") },
                 { icon: Leaf, label: t("home.feature.local") },
               ].map((s) => (
-                <div key={s.label} className="text-sm">
+                <div key={s.label} className="text-sm text-background">
                   <s.icon className="size-5 text-primary mb-2" />
                   <div className="font-medium">{s.label}</div>
                 </div>
@@ -85,10 +157,8 @@ function Home() {
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-square rounded-[2.5rem] overflow-hidden shadow-warm">
               <img
-                src={heroAsset.url}
-                alt="Royal Sweets kunafa garnished with pistachio"
-                width={1600}
-                height={1600}
+                src={baklavaTrayImg}
+                alt="Royal Sweets pistachio baklava"
                 className="size-full object-cover"
                 loading="eager"
               />
@@ -125,45 +195,87 @@ function Home() {
         <div className="pointer-events-none absolute -bottom-40 -left-40 size-[500px] rounded-full bg-primary/15 blur-3xl" />
       </section>
 
+      {/* PRODUCTS MARQUEE */}
+      <section dir="ltr" className="group overflow-hidden border-y border-border/60 py-8 mb-16 bg-card/60">
+        <div
+          className={`flex w-max gap-12 animate-marquee group-hover:[animation-play-state:paused] ${
+            locale === "ar" ? "[animation-direction:reverse]" : ""
+          }`}
+        >
+          {[...foods, ...foods].map((food, i) => (
+            <div key={`${food.id}-${i}`} className="flex items-center gap-3 shrink-0">
+             
+              <span className="font-display text-lg whitespace-nowrap">
+                {localizedFood(food, locale).name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* NEAREST BRANCH / ETA */}
       <section className="mx-auto max-w-7xl px-6 -mt-6">
         <NearestBranchBanner />
       </section>
 
-      {/* CATEGORIES */}
-
-      <section className="mx-auto max-w-7xl px-6 py-12">
-        <div className="flex items-end justify-between mb-8">
-          <h2 className="font-display text-4xl lg:text-5xl">{t("home.browse")}</h2>
-          <Link to="/menu" className="text-sm text-primary hover:underline">
-            {t("home.seeAll")}
-          </Link>
-        </div>
-        <div className="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6">
-          {categories.slice(1).map((c) => (
-            <Link
-              key={c.id}
-              to="/menu"
-              search={{ cat: c.id }}
-              className="shrink-0 rounded-full border border-border bg-card px-6 h-12 inline-flex items-center text-sm font-medium hover:border-primary hover:text-primary transition-colors"
-            >
-              {localizedCategoryName(c, locale)}
+      {/* CATEGORIES — temporarily hidden, set to true to bring back */}
+      {false && (
+        <section className="mx-auto max-w-7xl px-6 py-12">
+          <div className="flex items-end justify-between mb-8">
+            <h2 className="font-display text-4xl lg:text-5xl">{t("home.browse")}</h2>
+            <Link to="/menu" className="text-sm text-primary hover:underline">
+              {t("home.seeAll")}
             </Link>
-          ))}
-        </div>
-      </section>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6">
+            {categories.slice(1).map((c) => (
+              <Link
+                key={c.id}
+                to="/menu"
+                search={{ cat: c.id }}
+                className="shrink-0 rounded-full border border-border bg-card px-6 h-12 inline-flex items-center text-sm font-medium hover:border-primary hover:text-primary transition-colors"
+              >
+                {localizedCategoryName(c, locale)}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* FEATURED GRID */}
-      <section className="mx-auto max-w-7xl px-6 py-12">
-        <div className="mb-10 max-w-2xl">
-          <span className="text-xs uppercase tracking-[0.25em] text-primary">{t("home.chefsPicks")}</span>
-          <h2 className="mt-3 font-display text-5xl lg:text-6xl">
+      <section
+        className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-cover bg-center px-6 py-12 transition-[background-image] duration-700"
+        style={activeTray ? { backgroundImage: `url(${activeTray.image})` } : undefined}
+      >
+        {activeTray && <div className="absolute inset-0 bg-foreground/65 transition-opacity duration-700" />}
+        <div className="relative mb-10 max-w-2xl">
+          <span
+            className={`text-xs uppercase tracking-[0.25em] transition-colors ${activeTray ? "text-background" : "text-primary"}`}
+          >
+            {t("home.chefsPicks")}
+          </span>
+          <h2
+            className={`mt-3 font-display text-5xl lg:text-6xl transition-colors ${activeTray ? "text-background" : ""}`}
+          >
             {t("home.featuredA")} <em className="text-primary not-italic">{t("home.featuredB")}</em> {t("home.featuredC")}
           </h2>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featured.map((f) => (
-            <FoodCard key={f.id} food={f} />
+        <div className="relative grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {trays.map((tray) => (
+            <Link
+              key={tray.key}
+              to="/food/$id"
+              params={{ id: tray.foodId }}
+              onMouseEnter={() => setHoveredTray(tray.key)}
+              onMouseLeave={() => setHoveredTray(null)}
+              className="block rounded-3xl border border-border bg-card/95 backdrop-blur p-6 shadow-soft transition-transform hover:-translate-y-1"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl mb-4">
+                <img src={tray.image} alt={tray.name} className="size-full object-cover" />
+              </div>
+              <h3 className="font-display text-2xl">{tray.name}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{tray.desc}</p>
+            </Link>
           ))}
         </div>
       </section>
@@ -177,9 +289,44 @@ function Home() {
           </Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {popular.map((f) => (
-            <FoodCard key={f.id} food={f} />
-          ))}
+          {popular.map((f, i) => {
+            const l = localizedFood(f, locale);
+            const img = popularTempImages[i % popularTempImages.length];
+            return (
+              <Link
+                key={f.id}
+                to="/food/$id"
+                params={{ id: f.id }}
+                className="group relative block aspect-square overflow-hidden rounded-3xl shadow-soft"
+              >
+                <img
+                  src={img}
+                  alt={l.name}
+                  loading="lazy"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-x-0 bottom-0 translate-y-4 p-5 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <h3 className="font-display text-xl text-background">{l.name}</h3>
+                  <p className="mt-1 text-xs text-background/80 line-clamp-1">{l.tagline}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="font-display text-lg text-background">${f.price}</span>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        add(f.id);
+                      }}
+                      aria-label={`${t("card.add")} ${l.name}`}
+                      className="size-10 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-warm hover:scale-110 active:scale-95 transition-transform"
+                    >
+                      <Plus className="size-4" />
+                    </button>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

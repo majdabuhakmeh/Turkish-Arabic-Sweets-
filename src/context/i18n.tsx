@@ -103,6 +103,20 @@ const en: Dict = {
   "footer.phone": "0598 356 306",
   "footer.explore": "Explore",
   "footer.copyright": "Crafted with care, served like royalty.",
+  // about page
+  "about.kicker": "Our story",
+  "about.titleA": "A family kitchen,",
+  "about.titleEm": "centuries",
+  "about.titleB": "of taste.",
+  "about.intro":
+    "Royal Sweets began in a small kitchen in Al-Sumou, with one mission: to honor the Levantine art of confectionery — every sheet of phyllo rolled by hand, every nut hand-cracked, every tray scented with rose water and orange blossom the way our grandmothers taught us.",
+  "about.imageAlt1": "A presentation tray of Royal Sweets",
+  "about.body1":
+    "We believe the finest sweets come from the simplest ingredients, treated with absurd attention. The clearest clarified butter. Whole Aleppo pistachios. Akkawi cheese desalinated overnight. A syrup that sings of orange blossom, not sugar.",
+  "about.imageAlt2": "Fresh baklava on the tray",
+  "about.body2":
+    "Every piece you receive was rolled, layered and baked the same day. We deliver fresh from the boutique on Al-Sumou Center — and every gift box leaves with our crown seal.",
+  "about.closing": "Come hungry. Leave like royalty.",
   // language
   "lang.switch": "العربية",
 };
@@ -116,7 +130,7 @@ const ar: Dict = {
   "nav.admin": "الإدارة",
   "nav.account": "حسابي",
   "nav.signin": "تسجيل الدخول",
-  "nav.cart": "السلة",
+  "nav.cart": "علبتي",
   "nav.menuLabel": "القائمة",
   "nav.favorites": "المفضّلة",
   "header.openNow": "مفتوح اليوم · صواني طازجة كل ساعة",
@@ -187,7 +201,7 @@ const ar: Dict = {
   "cart.tax": "ضريبة القيمة المضافة",
   "cart.total": "الإجمالي",
   "cart.checkout": "إتمام الشراء",
-  "cart.addMore": "أضف المزيد",
+  "cart.addMore": "أضف المزيد من الحلويات",
   "footer.brand": "حلويات الملكي",
   "footer.brandAr": "حلويات الملكي",
   "footer.about":
@@ -198,6 +212,19 @@ const ar: Dict = {
   "footer.phone": "٠٥٩٨ ٣٥٦ ٣٠٦",
   "footer.explore": "استكشف",
   "footer.copyright": "صُنعت بعناية، تُقدَّم كالملوك.",
+  "about.kicker": "قصتنا",
+  "about.titleA": "مطبخ عائليّ،",
+  "about.titleEm": "قرونٌ",
+  "about.titleB": "من النكهة الأصيلة.",
+  "about.intro":
+    "بدأت حلويات الملكي في مطبخٍ صغير في السموع، برسالةٍ واحدة: تكريم فنّ الحلويات الشاميّة — كل رقاقة فيلو تُلَفّ يدويًا، كل حبّة مكسّرات تُكسَر يدويًا، وكل صينية معطّرة بماء الورد وماء الزهر متل ما علّمتنا جدّاتنا.",
+  "about.imageAlt1": "صينية تقديم من حلويات الملكي",
+  "about.body1":
+    "نؤمن إنّ ألذّ الحلويات تجي من أبسط المكوّنات، بس بعناية فائقة: أصفى سمن بلدي، فستق حلبي كامل، جبنة عكاوي منقوعة طول الليل لإزالة ملوحتها، وقطر يفوح بماء الزهر لا بالسكر.",
+  "about.imageAlt2": "بقلاوة طازجة على الصينية",
+  "about.body2":
+    "كل قطعة توصلك اتلفّت واتطبخت بنفس اليوم. بنوصّل طازة من البوتيك بمجمع السموع سنتر — وكل علبة إهداء بتطلع بختم التاج تبعنا.",
+  "about.closing": "تعال جائعًا. غادر كالملوك.",
   "lang.switch": "English",
 };
 
@@ -215,7 +242,7 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 const STORAGE_KEY = "royalsweets.locale";
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>("en");
+  const [locale, setLocaleState] = useState<Locale>("ar");
   const [hydrated, setHydrated] = useState(false);
 
   // Hydrate from localStorage after mount to avoid SSR/client mismatch

@@ -51,6 +51,11 @@
 :root {
   --radius: 1rem;
 
+  /* Hero background overlay darkness (0 = transparent, 1 = solid black).
+     Tune these two to control how dark the hero image gets top → bottom. */
+  --hero-overlay-top: 0.35;
+  --hero-overlay-bottom: 0.75;
+
   /* Royal Sweets brand palette */
   --cream:      oklch(0.985 0.012 85);     /* #FBF7EE — page cream */
   --charcoal:   oklch(0.16 0.005 60);      /* #18181B — deep charcoal */
@@ -169,4 +174,30 @@
 }
 @utility gradient-cream {
   background-image: var(--gradient-cream);
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(56px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@utility animate-hero-in {
+  animation: hero-in 1.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@utility animate-marquee {
+  animation: marquee 32s linear infinite;
 }

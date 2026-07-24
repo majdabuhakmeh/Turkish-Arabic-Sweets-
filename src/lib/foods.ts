@@ -68,7 +68,7 @@ export const foods: Food[] = [
   },
   {
     id: "kunafa-cheese",
-    name: "Kunafa Naabulsiyeh",
+    name: "Kunafa Nabulsiyeh",
     nameAr: "كنافة نابلسيّة",
     tagline: "Crispy semolina, melted akkawi, pistachio",
     taglineAr: "شعيرات السميد، جبنة عكاوي، فستق",
@@ -214,7 +214,7 @@ export const foods: Food[] = [
   },
   {
     id: "almond-baklava",
-    name: "Almond Mussels (Asabe)",
+    name: "Almond Fingers (Asabe)",
     nameAr: "أصابع باللوز",
     tagline: "Mussel-shaped phyllo, whole almond crown",
     taglineAr: "أصابع فيلو مزيّنة بحبّة لوز",
