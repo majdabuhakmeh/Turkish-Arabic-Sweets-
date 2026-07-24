@@ -1,15 +1,15 @@
-import baklavaPistachioAsset from "@/assets/sweet-baklava-pistachio.jpg.asset.json";
-import kunafaCheeseAsset from "@/assets/sweet-kunafa-cheese.jpg.asset.json";
+import baklavaPistachioImg from "@/assets/baklava2.jpg";
+import kunafaCheeseImg from "@/assets/knafeh 2.jpg";
 import kunafaNaamehAsset from "@/assets/sweet-kunafa-naameh.jpg.asset.json";
-import harissaAsset from "@/assets/sweet-harissa-pistachio.jpg.asset.json";
+import harissaImg from "@/assets/هريسة بالقشطة.jpg";
 import mafroukehAsset from "@/assets/sweet-mafroukeh.jpg.asset.json";
-import fingerBaklavaAsset from "@/assets/sweet-finger-baklava.jpg.asset.json";
+import fingerBaklavaImg from "@/assets/اصابع بالفستق.jpg";
 import baklavaRollsAsset from "@/assets/sweet-baklava-rolls.jpg.asset.json";
 import warbatAsset from "@/assets/sweet-warbat.jpg.asset.json";
 import almondBaklavaAsset from "@/assets/sweet-almond-baklava.jpg.asset.json";
 import layaliAsset from "@/assets/sweet-layali.jpg.asset.json";
 import kunafaSliceAsset from "@/assets/sweet-kunafa-slice.jpg.asset.json";
-import trayAssortmentAsset from "@/assets/sweet-tray-assortment.jpg.asset.json";
+import trayAssortmentImg from "@/assets/طبق مشل.jpg";
 
 export type Food = {
   id: string;
@@ -55,7 +55,7 @@ export const foods: Food[] = [
       "أربعون طبقةً من رقائق الفيلو الشفّافة مدهونةً بالسمن البلدي، محشوّة بالفستق الحلبي المطحون ومُروَّاة بقطر ماء الورد.",
     price: 38,
     originalPrice: 45,
-    image: baklavaPistachioAsset.url,
+    image: baklavaPistachioImg,
     category: "baklava",
     prepTime: 25,
     calories: 320,
@@ -77,7 +77,7 @@ export const foods: Food[] = [
     descriptionAr:
       "شعيرات السميد المسحوبة يدوياً فوق جبنة العكاوي الطازجة، تُخبز حتى الذهبي ثم تُغمر بقطر ماء الزهر الدافئ وتُرشّ بالفستق.",
     price: 32,
-    image: kunafaCheeseAsset.url,
+    image: kunafaCheeseImg,
     category: "kunafa",
     prepTime: 18,
     calories: 480,
@@ -120,7 +120,7 @@ export const foods: Food[] = [
     descriptionAr:
       "كيكة السميد الطريّة مقسومة وممتلئة بالقشطة الطازجة، مرويّة بقطر الليمون ومرشوشة بفتات الفستق.",
     price: 28,
-    image: harissaAsset.url,
+    image: harissaImg,
     category: "cakes",
     prepTime: 15,
     calories: 360,
@@ -162,7 +162,7 @@ export const foods: Food[] = [
     descriptionAr:
       "أصابع شعيريّة ملفوفة يدوياً ومحشوّة بحبّات الفستق الكاملة، تُخبز ذهبيّةً ثم تُدهن بقطر السكر الخفيف.",
     price: 26,
-    image: fingerBaklavaAsset.url,
+    image: fingerBaklavaImg,
     category: "baklava",
     prepTime: 14,
     calories: 280,
@@ -284,7 +284,7 @@ export const foods: Food[] = [
       "صينية تقديم بتشكيلةٍ من جميع توقيعاتنا: بقلاوة، أصابع، كنافة، ورقيّات والمزيد — مثاليّة للإهداء.",
     price: 120,
     originalPrice: 145,
-    image: trayAssortmentAsset.url,
+    image: trayAssortmentImg,
     category: "trays",
     prepTime: 30,
     calories: 0,

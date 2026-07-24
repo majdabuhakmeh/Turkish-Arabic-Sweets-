@@ -44,7 +44,7 @@ const en: Dict = {
   "home.viewFull": "View the full menu →",
   "home.ctaTitle": "First order? Save 20% on your gift box.",
   "home.ctaBody1": "Use code",
-  "home.ctaBody2": "at checkout. Free local delivery on boxes over 50 SAR.",
+  "home.ctaBody2": "at checkout. Free local delivery on boxes over 50 Nis.",
   "home.ctaButton": "Start your box",
   // menu
   "menu.kicker": "The boutique",
@@ -174,7 +174,7 @@ const ar: Dict = {
   "home.viewFull": "عرض القائمة كاملة ←",
   "home.ctaTitle": "أوّل طلب؟ خصم ٢٠٪ على علبة الإهداء.",
   "home.ctaBody1": "استخدم الكود",
-  "home.ctaBody2": "عند الدفع. توصيل مجّاني محلّياً للطلبات فوق ٥٠ ر.س.",
+  "home.ctaBody2": "عند الدفع. توصيل مجّاني محلّياً للطلبات فوق ٥٠ شيكل.",
   "home.ctaButton": "ابدأ علبتك",
   "menu.kicker": "البوتيك",
   "menu.titleA": "كلّ قطعةٍ",

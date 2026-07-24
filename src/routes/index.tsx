@@ -1,16 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Clock, Sparkles, Leaf, Star, Plus } from "lucide-react";
-import floatAsset from "@/assets/sweet-baklava-pistachio.jpg.asset.json";
+import heroAsset from "@/assets/hero.jpg";
+import floatAsset from "@/assets/baklava2.jpg";
 import kunafaTrayImg from "@/assets/كنافة نابلسية.jpg";
 import baklavaTrayImg from "@/assets/baqlwa.jpg";
-import heroImg from "@/assets/2f6780e5f5afc8078f73dc5209196b6c.jpg";
 import kellajTrayImg from "@/assets/kolaj.jpg";
-import maamoulDateImg from "@/assets/معمول بالتمر.jpg";
-import maamoulPistachioImg from "@/assets/معمول بالفستق.jpg";
 import { foods, categories, localizedCategoryName, localizedFood } from "@/lib/foods";
-import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
+import { useCart } from "@/context/cart";
 import { NearestBranchBanner } from "@/components/NearestBranchBanner";
 
 export const Route = createFileRoute("/")({
@@ -24,7 +22,7 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:title", content: "Royal Sweets — حلويات الملكي" },
       { property: "og:description", content: "Handcrafted baklava, kunafa & Levantine pastries from Al-Sumou. Boxed with care, delivered fresh." },
-      { property: "og:image", content: heroImg },
+      { property: "og:image", content: heroAsset },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -37,13 +35,6 @@ function Home() {
   const t = useT();
   const { locale } = useI18n();
   const { add } = useCart();
-  const popularTempImages = [
-    kunafaTrayImg,
-    baklavaTrayImg,
-    kellajTrayImg,
-    maamoulDateImg,
-    maamoulPistachioImg,
-  ];
   const [hoveredTray, setHoveredTray] = useState<string | null>(null);
 
   const trays = [
@@ -85,7 +76,7 @@ function Home() {
       {/* HERO */}
       <section
         className="relative overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImg})` }}
+        style={{ backgroundImage: `url(${heroAsset})` }}
       >
         <div
           className="absolute inset-0"
@@ -94,7 +85,7 @@ function Home() {
               "linear-gradient(180deg, rgba(0,0,0,var(--hero-overlay-top)) 0%, rgba(0,0,0,var(--hero-overlay-bottom)) 100%)",
           }}
         />
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-8 pb-14 lg:pt-12 lg:pb-16 grid lg:grid-cols-12 gap-12 items-center">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-12 pb-24 lg:pt-20 lg:pb-32 grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 relative z-10">
             <span
               className="animate-hero-in inline-flex items-center gap-2 rounded-full border border-background/30 bg-background/10 px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-background backdrop-blur"
@@ -104,7 +95,7 @@ function Home() {
               {t("header.openNow")}
             </span>
             <h1
-              className="animate-hero-in mt-6 font-display text-5xl sm:text-6xl lg:text-7xl leading-[0.95] text-balance text-background"
+              className="animate-hero-in mt-8 font-display text-6xl sm:text-7xl lg:text-[7.5rem] leading-[0.95] text-balance text-background"
               style={{ animationDelay: "0.2s" }}
             >
               {t("home.h1.line1")}
@@ -158,7 +149,7 @@ function Home() {
           <div className="lg:col-span-6 relative">
             <div className="relative aspect-square rounded-[2.5rem] overflow-hidden shadow-warm">
               <img
-                src={heroImg}
+                src={heroAsset}
                 alt="Royal Sweets tray assortment"
                 className="size-full object-cover"
                 loading="eager"
@@ -180,7 +171,7 @@ function Home() {
             {/* Floating special card */}
             <div className="hidden md:block absolute -right-4 top-10 rtl:right-auto rtl:-left-4 bg-card rounded-2xl p-3 shadow-soft border border-border">
               <div className="flex items-center gap-3">
-                <img src={floatAsset.url} alt="" className="size-14 rounded-xl object-cover" />
+                <img src={floatAsset} alt="" className="size-14 rounded-xl object-cover" />
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     {t("home.todaysSpecial")}
@@ -197,7 +188,7 @@ function Home() {
       </section>
 
       {/* PRODUCTS MARQUEE */}
-      <section dir="ltr" className="group overflow-hidden border-y border-border/60 py-8 mb-16 bg-card/60">
+      <section dir="ltr" className="group overflow-hidden border-y border-border/60 py-8 bg-card/60">
         <div
           className={`flex w-max gap-12 animate-marquee group-hover:[animation-play-state:paused] ${
             locale === "ar" ? "[animation-direction:reverse]" : ""
@@ -269,13 +260,31 @@ function Home() {
               params={{ id: tray.foodId }}
               onMouseEnter={() => setHoveredTray(tray.key)}
               onMouseLeave={() => setHoveredTray(null)}
-              className="block rounded-3xl border border-border bg-card/95 backdrop-blur p-6 shadow-soft transition-transform hover:-translate-y-1"
+              className="group relative block aspect-[4/3] overflow-hidden rounded-3xl shadow-soft"
             >
-              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl mb-4">
-                <img src={tray.image} alt={tray.name} className="size-full object-cover" />
+              <img
+                src={tray.image}
+                alt={tray.name}
+                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute inset-x-0 bottom-0 translate-y-4 p-5 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <h3 className="font-display text-2xl text-background">{tray.name}</h3>
+                <p className="mt-1 text-sm text-background/80 line-clamp-2">{tray.desc}</p>
+                <div className="mt-3 flex justify-end">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      add(tray.foodId);
+                    }}
+                    aria-label={`${t("card.add")} ${tray.name}`}
+                    className="size-10 rounded-full bg-primary text-primary-foreground grid place-items-center shadow-warm hover:scale-110 active:scale-95 transition-transform"
+                  >
+                    <Plus className="size-4" />
+                  </button>
+                </div>
               </div>
-              <h3 className="font-display text-2xl">{tray.name}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{tray.desc}</p>
             </Link>
           ))}
         </div>
@@ -290,9 +299,8 @@ function Home() {
           </Link>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {popular.map((f, i) => {
+          {popular.map((f) => {
             const l = localizedFood(f, locale);
-            const img = popularTempImages[i % popularTempImages.length];
             return (
               <Link
                 key={f.id}
@@ -301,7 +309,7 @@ function Home() {
                 className="group relative block aspect-square overflow-hidden rounded-3xl shadow-soft"
               >
                 <img
-                  src={img}
+                  src={f.image}
                   alt={l.name}
                   loading="lazy"
                   className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
