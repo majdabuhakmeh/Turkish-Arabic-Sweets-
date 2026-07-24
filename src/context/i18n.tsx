@@ -117,6 +117,22 @@ const en: Dict = {
   "about.body2":
     "Every piece you receive was rolled, layered and baked the same day. We deliver fresh from the boutique on Al-Sumou Center — and every gift box leaves with our crown seal.",
   "about.closing": "Come hungry. Leave like royalty.",
+  // contact page
+  "contact.kicker": "Visit the boutique",
+  "contact.title": "Come say hello.",
+  "contact.intro":
+    "Stop by the Royal Sweets boutique at Al-Sumou Center for a warm slice of kunafa straight from the oven, or message us to arrange a gift box.",
+  "contact.visit": "Visit",
+  "contact.visitBody": "Al-Sumou Center, Asfi\nAl-Sumou",
+  "contact.call": "Call / WhatsApp",
+  "contact.email": "Email",
+  "contact.hours": "Hours",
+  "contact.hoursBody": "Open daily, 9am – 11pm",
+  "contact.formTitle": "Send a note",
+  "contact.formName": "Your name",
+  "contact.formEmail": "Email",
+  "contact.formMessage": "What gift box can we prepare for you?",
+  "contact.formSend": "Send message",
   // language
   "lang.switch": "العربية",
 };
@@ -225,6 +241,21 @@ const ar: Dict = {
   "about.body2":
     "كل قطعة توصلك اتلفّت واتطبخت بنفس اليوم. بنوصّل طازة من البوتيك بمجمع السموع سنتر — وكل علبة إهداء بتطلع بختم التاج تبعنا.",
   "about.closing": "تعال جائعًا. غادر كالملوك.",
+  "contact.kicker": "زور البوتيك",
+  "contact.title": "تعال قلّي مرحبا.",
+  "contact.intro":
+    "مرّ على بوتيك حلويات الملكي بمجمع السموع سنتر وخد قطعة كنافة دافية طالعة من الفرن توّها، أو راسلنا نحضّرلك علبة إهداء.",
+  "contact.visit": "زورنا",
+  "contact.visitBody": "مجمع السموع سنتر، أصفي\nالسموع",
+  "contact.call": "اتصال / واتساب",
+  "contact.email": "البريد الإلكتروني",
+  "contact.hours": "أوقات الدوام",
+  "contact.hoursBody": "يوميًا، ٩ صباحًا – ١١ مساءً",
+  "contact.formTitle": "أرسلنا رسالة",
+  "contact.formName": "اسمك",
+  "contact.formEmail": "البريد الإلكتروني",
+  "contact.formMessage": "شو العلبة يلي بدنا نجهّزلك؟",
+  "contact.formSend": "إرسال الرسالة",
   "lang.switch": "English",
 };
 

@@ -75,18 +75,20 @@ export function Header() {
           <SheetTitle className="sr-only">{t("nav.menuLabel")}</SheetTitle>
           <div className="flex-1 overflow-y-auto px-6 py-8 flex flex-col gap-8">
             <nav className="flex flex-col gap-1">
-              {links.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  onClick={() => setOpen(false)}
-                  className="py-2.5 text-lg font-display"
-                  activeProps={{ className: "text-primary" }}
-                  activeOptions={{ exact: l.to === "/" }}
-                >
-                  {t(l.key)}
-                </Link>
-              ))}
+              {links
+                .filter((l) => l.key !== "nav.brands") // hidden temporarily, remove filter to bring back
+                .map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setOpen(false)}
+                    className="py-2.5 text-lg font-display"
+                    activeProps={{ className: "text-primary" }}
+                    activeOptions={{ exact: l.to === "/" }}
+                  >
+                    {t(l.key)}
+                  </Link>
+                ))}
             </nav>
 
             <Link
