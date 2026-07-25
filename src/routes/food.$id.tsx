@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Clock, Flame, Minus, Plus, Star } from "lucide-react";
 import { getFood, categories, localizedFood, localizedCategoryName } from "@/lib/foods";
+import { formatPrice } from "@/lib/currency";
 import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { FoodReviews } from "@/components/FoodReviews";
@@ -77,7 +78,7 @@ function FoodPage() {
           <p className="mt-3 text-lg text-muted-foreground">{l.tagline}</p>
 
           <div className="mt-8 flex items-baseline gap-3">
-            <span className="font-display text-5xl text-primary">${food.price}</span>
+            <span className="font-display text-5xl text-primary">{formatPrice(food.price, locale)}</span>
             {food.originalPrice && (
               <span className="text-xl text-muted-foreground line-through">
                 ${food.originalPrice}

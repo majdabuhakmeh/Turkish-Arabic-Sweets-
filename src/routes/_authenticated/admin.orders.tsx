@@ -193,7 +193,7 @@ function AdminOrders() {
                 <td className="p-3 hidden sm:table-cell text-muted-foreground">
                   {new Date(o.created_at).toLocaleString()}
                 </td>
-                <td className="p-3 font-medium">${Number(o.total).toFixed(2)}</td>
+                <td className="p-3 font-medium">{Number(o.total).toFixed(2)} NIS</td>
                 <td className="p-3">
                   <div className="flex items-center gap-2">
                     <span className={`inline-block size-2 rounded-full ${statusColor[o.status] ?? "bg-muted"}`} />

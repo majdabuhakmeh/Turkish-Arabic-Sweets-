@@ -192,7 +192,7 @@ function AdminReports() {
                       </span>
                       <span className="flex items-center gap-4 shrink-0">
                         <span className="text-muted-foreground">{d.qty} sold</span>
-                        <span className="font-medium tabular-nums">${d.revenue.toFixed(2)}</span>
+                        <span className="font-medium tabular-nums">{d.revenue.toFixed(2)} NIS</span>
                       </span>
                     </li>
                   ))}

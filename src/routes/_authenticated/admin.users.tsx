@@ -252,7 +252,7 @@ function AdminUsers() {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{u.phone || "—"}</td>
                     <td className="px-4 py-3 text-right">{u.orders}</td>
-                    <td className="px-4 py-3 text-right">${u.spent.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-right">{u.spent.toFixed(2)} NIS</td>
                     <td className="px-4 py-3">
                       {u.isAdmin ? (
                         <Badge>Admin</Badge>

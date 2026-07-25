@@ -248,11 +248,11 @@ function OrderDetail() {
                 <div className="flex-1">
                   <div className="font-medium">{it.name}</div>
                   <div className="text-sm text-muted-foreground">
-                    ${Number(it.unit_price).toFixed(2)} × {it.qty}
+                    {Number(it.unit_price).toFixed(2)} NIS × {it.qty}
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <div className="font-medium">${Number(it.line_total).toFixed(2)}</div>
+                  <div className="font-medium">{Number(it.line_total).toFixed(2)} NIS</div>
                   {order.status === "delivered" && (
                     <Button
                       size="sm"
@@ -276,14 +276,14 @@ function OrderDetail() {
               {Number(order.discount) > 0 && (
                 <div className="flex justify-between text-primary">
                   <dt>Discount{order.coupon_code ? ` (${order.coupon_code})` : ""}</dt>
-                  <dd className="font-medium">−${Number(order.discount).toFixed(2)}</dd>
+                  <dd className="font-medium">−{Number(order.discount).toFixed(2)} NIS</dd>
                 </div>
               )}
               <Row label="Delivery" value={order.delivery_fee} />
               <Row label="Tax" value={order.tax} />
               <div className="flex justify-between pt-3 border-t border-border">
                 <dt className="font-display text-lg">Total</dt>
-                <dd className="font-display text-2xl text-primary">${Number(order.total).toFixed(2)}</dd>
+                <dd className="font-display text-2xl text-primary">{Number(order.total).toFixed(2)} NIS</dd>
               </div>
             </dl>
             <div className="mt-3 text-xs text-muted-foreground capitalize">
@@ -324,7 +324,7 @@ function Row({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex justify-between">
       <dt className="text-muted-foreground">{label}</dt>
-      <dd>${Number(value).toFixed(2)}</dd>
+      <dd>{Number(value).toFixed(2)} NIS</dd>
     </div>
   );
 }

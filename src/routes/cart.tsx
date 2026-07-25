@@ -3,6 +3,7 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, MapPin, AlertCircle } fro
 import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { localizedFood } from "@/lib/foods";
+import { formatPrice } from "@/lib/currency";
 import { useBranch } from "@/context/branch";
 
 export const Route = createFileRoute("/cart")({
@@ -70,8 +71,8 @@ function CartPage() {
         <div className="mt-4 flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/5 px-5 py-4 text-sm">
           <AlertCircle className="size-5 text-amber-600 shrink-0 mt-0.5" />
           <p>
-            {selected?.name} has a minimum order of <strong>${minOrder.toFixed(2)}</strong>. Add
-            <strong> ${(minOrder - subtotal).toFixed(2)} </strong>more to check out.
+            {selected?.name} has a minimum order of <strong>{formatPrice(minOrder, locale)}</strong>. Add
+            <strong> {formatPrice(minOrder - subtotal, locale)} </strong>more to check out.
           </p>
         </div>
       )}
@@ -101,7 +102,7 @@ function CartPage() {
                   <div>
                     <h3 className="font-display text-2xl leading-tight">{l.name}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{l.tagline}</p>
-                    <p className="text-xs text-muted-foreground mt-1">${unitPrice.toFixed(2)} each</p>
+                    <p className="text-xs text-muted-foreground mt-1">{formatPrice(unitPrice, locale)} each</p>
                     {!available && (
                       <p className="text-xs text-destructive mt-1 font-medium">
                         Unavailable at this branch
@@ -109,7 +110,7 @@ function CartPage() {
                     )}
                   </div>
                   <div className="font-display text-xl text-primary">
-                    ${lineTotal.toFixed(2)}
+                    {formatPrice(lineTotal, locale)}
                   </div>
                 </div>
                 <div className="mt-4 flex items-center justify-between">
@@ -146,19 +147,19 @@ function CartPage() {
           <dl className="mt-6 space-y-3 text-sm">
             <div className="flex justify-between">
               <dt className="text-muted-foreground">{t("cart.subtotal")}</dt>
-              <dd className="font-medium">${subtotal.toFixed(2)}</dd>
+              <dd className="font-medium">{formatPrice(subtotal, locale)}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">{t("cart.delivery")}</dt>
-              <dd className="font-medium">${delivery.toFixed(2)}</dd>
+              <dd className="font-medium">{formatPrice(delivery, locale)}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">{t("cart.tax")}</dt>
-              <dd className="font-medium">${tax.toFixed(2)}</dd>
+              <dd className="font-medium">{formatPrice(tax, locale)}</dd>
             </div>
             <div className="border-t border-border pt-4 flex justify-between items-baseline">
               <dt className="font-display text-xl">{t("cart.total")}</dt>
-              <dd className="font-display text-3xl text-primary">${total.toFixed(2)}</dd>
+              <dd className="font-display text-3xl text-primary">{formatPrice(total, locale)}</dd>
             </div>
           </dl>
           {hasUnavailable || belowMin ? (
@@ -166,7 +167,7 @@ function CartPage() {
               disabled
               className="mt-8 w-full inline-flex items-center justify-center gap-2 rounded-full bg-muted text-muted-foreground h-14 font-medium cursor-not-allowed"
             >
-              {hasUnavailable ? "Resolve unavailable items" : `Add $${(minOrder - subtotal).toFixed(2)} to check out`}
+              {hasUnavailable ? "Resolve unavailable items" : `Add ${formatPrice(minOrder - subtotal, locale)} to check out`}
             </button>
           ) : (
             <Link

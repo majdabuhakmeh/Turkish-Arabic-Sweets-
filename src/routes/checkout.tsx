@@ -3,7 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { CreditCard, Wallet, Loader2, Tag, X, Check, AlertCircle, Clock } from "lucide-react";
 import { useCart } from "@/context/cart";
 import { useAuth } from "@/context/auth";
+import { useI18n } from "@/context/i18n";
 import { useBranch } from "@/context/branch";
+import { formatPrice } from "@/lib/currency";
+import type { Locale } from "@/context/i18n";
 import { useServerFn } from "@tanstack/react-start";
 import { placeOrder } from "@/lib/orders.functions";
 import { validateCoupon, previewCoupon, type CouponPreview } from "@/lib/coupons.functions";
@@ -25,6 +28,7 @@ export const Route = createFileRoute("/checkout")({
 function CheckoutPage() {
   const { subtotal, count, detailed, clear } = useCart();
   const { user } = useAuth();
+  const { locale } = useI18n();
   const { selected: branch } = useBranch();
   const navigate = useNavigate();
   const place = useServerFn(placeOrder);
@@ -109,7 +113,7 @@ function CheckoutPage() {
   const confirmCoupon = () => {
     if (!pending) return;
     setCoupon(pending);
-    toast.success(`${pending.code} applied — you saved $${pending.discount.toFixed(2)}`);
+    toast.success(`${pending.code} applied — you saved ${formatPrice(pending.discount, locale)}`);
     setPending(null);
     setPreview(null);
   };
@@ -151,7 +155,7 @@ function CheckoutPage() {
     }
     if (belowMin) {
       toast.error(
-        `${branch.name} has a minimum order of $${minOrder.toFixed(2)}.`,
+        `${branch.name} has a minimum order of ${formatPrice(minOrder, locale)}.`,
       );
       return;
     }
@@ -203,8 +207,8 @@ function CheckoutPage() {
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-4 text-sm">
           <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
           <p>
-            {branch?.name} has a minimum order of <strong>${minOrder.toFixed(2)}</strong>. Add
-            <strong> ${(minOrder - subtotal).toFixed(2)} </strong>more to continue.
+            {branch?.name} has a minimum order of <strong>{formatPrice(minOrder, locale)}</strong>. Add
+            <strong> {formatPrice(minOrder - subtotal, locale)} </strong>more to continue.
           </p>
         </div>
       )}
@@ -246,18 +250,18 @@ function CheckoutPage() {
         <aside className="lg:sticky lg:top-28 self-start rounded-3xl bg-card border border-border p-8 shadow-warm">
           <h2 className="font-display text-3xl">Your order</h2>
           <dl className="mt-6 space-y-3 text-sm">
-            <Row label="Subtotal" value={subtotal} />
+            <Row label="Subtotal" value={subtotal} locale={locale} />
             {discount > 0 && (
               <div className="flex justify-between text-primary">
                 <dt>Discount ({coupon?.code})</dt>
-                <dd className="font-medium">−${discount.toFixed(2)}</dd>
+                <dd className="font-medium">−{formatPrice(discount, locale)}</dd>
               </div>
             )}
-            <Row label="Delivery" value={delivery} />
-            <Row label="Tax" value={tax} />
+            <Row label="Delivery" value={delivery} locale={locale} />
+            <Row label="Tax" value={tax} locale={locale} />
             <div className="border-t border-border pt-4 flex justify-between items-baseline">
               <dt className="font-display text-xl">Total</dt>
-              <dd className="font-display text-3xl text-primary">${total.toFixed(2)}</dd>
+              <dd className="font-display text-3xl text-primary">{formatPrice(total, locale)}</dd>
             </div>
           </dl>
 
@@ -313,6 +317,7 @@ function CheckoutPage() {
                 preview={preview}
                 onApply={applyCoupon}
                 applying={applying}
+                locale={locale}
               />
             )}
           </div>
@@ -323,7 +328,7 @@ function CheckoutPage() {
             className="mt-8 w-full rounded-full bg-primary text-primary-foreground h-14 font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {submitting && <Loader2 className="size-4 animate-spin" />}
-            Place order · ${total.toFixed(2)}
+            Place order · {formatPrice(total, locale)}
           </button>
         </aside>
       </form>
@@ -334,6 +339,7 @@ function CheckoutPage() {
           subtotal={subtotal}
           delivery={delivery}
           taxRate={taxRate}
+          locale={locale}
           onConfirm={confirmCoupon}
           onCancel={() => setPending(null)}
         />
@@ -381,11 +387,11 @@ function PayOption({
   );
 }
 
-function Row({ label, value }: { label: string; value: number }) {
+function Row({ label, value, locale }: { label: string; value: number; locale: Locale }) {
   return (
     <div className="flex justify-between">
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-medium">${value.toFixed(2)}</dd>
+      <dd className="font-medium">{formatPrice(value, locale)}</dd>
     </div>
   );
 }
@@ -395,11 +401,13 @@ function CouponPreviewCard({
   preview,
   onApply,
   applying,
+  locale,
 }: {
   loading: boolean;
   preview: CouponPreview | null;
   onApply: () => void;
   applying: boolean;
+  locale: Locale;
 }) {
   if (loading && !preview) {
     return (
@@ -424,7 +432,7 @@ function CouponPreviewCard({
   const offerLabel =
     preview.discount_type === "percent"
       ? `${preview.discount_value}% off`
-      : `$${(preview.discount_value ?? 0).toFixed(2)} off`;
+      : `${formatPrice(preview.discount_value ?? 0, locale)} off`;
   const fmtDate = (s: string) =>
     new Date(s).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 
@@ -450,7 +458,7 @@ function CouponPreviewCard({
           <div className="text-right shrink-0">
             <div className="text-xs text-muted-foreground">You save</div>
             <div className="font-display text-xl text-primary leading-none">
-              −${preview.discount.toFixed(2)}
+              −{formatPrice(preview.discount, locale)}
             </div>
           </div>
         )}
@@ -460,13 +468,13 @@ function CouponPreviewCard({
         {preview.min_subtotal ? (
           <li className="flex items-center gap-1.5">
             <Check className="size-3.5 text-primary" />
-            Minimum order ${preview.min_subtotal.toFixed(2)}
+            Minimum order {formatPrice(preview.min_subtotal, locale)}
           </li>
         ) : null}
         {preview.discount_type === "percent" && preview.max_discount ? (
           <li className="flex items-center gap-1.5">
             <Check className="size-3.5 text-primary" />
-            Up to ${preview.max_discount.toFixed(2)} off
+            Up to {formatPrice(preview.max_discount, locale)} off
           </li>
         ) : null}
         {preview.expires_at ? (
@@ -509,6 +517,7 @@ function CouponConfirmDialog({
   subtotal,
   delivery,
   taxRate,
+  locale,
   onConfirm,
   onCancel,
 }: {
@@ -516,6 +525,7 @@ function CouponConfirmDialog({
   subtotal: number;
   delivery: number;
   taxRate: number;
+  locale: Locale;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -546,26 +556,26 @@ function CouponConfirmDialog({
         </p>
 
         <dl className="mt-6 space-y-3 text-sm">
-          <Row label="Subtotal" value={subtotal} />
+          <Row label="Subtotal" value={subtotal} locale={locale} />
           <div className="flex justify-between text-primary">
             <dt>Discount ({pending.code})</dt>
-            <dd className="font-medium">−${discount.toFixed(2)}</dd>
+            <dd className="font-medium">−{formatPrice(discount, locale)}</dd>
           </div>
-          <Row label="Delivery" value={delivery} />
-          <Row label="Tax" value={tax} />
+          <Row label="Delivery" value={delivery} locale={locale} />
+          <Row label="Tax" value={tax} locale={locale} />
           <div className="border-t border-border pt-4 flex justify-between items-baseline">
             <dt className="font-display text-xl">New total</dt>
             <dd className="text-right">
               <span className="block text-xs text-muted-foreground line-through">
-                ${oldTotal.toFixed(2)}
+                {formatPrice(oldTotal, locale)}
               </span>
-              <span className="font-display text-3xl text-primary">${newTotal.toFixed(2)}</span>
+              <span className="font-display text-3xl text-primary">{formatPrice(newTotal, locale)}</span>
             </dd>
           </div>
         </dl>
 
         <div className="mt-6 rounded-2xl bg-primary/5 border border-primary/30 px-4 py-3 text-sm text-center">
-          You save <span className="font-medium text-primary">${discount.toFixed(2)}</span> on this order
+          You save <span className="font-medium text-primary">{formatPrice(discount, locale)}</span> on this order
         </div>
 
         <div className="mt-6 flex gap-3">

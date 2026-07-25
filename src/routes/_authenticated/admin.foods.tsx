@@ -219,7 +219,7 @@ function AdminFoods() {
                   <div className="text-xs text-muted-foreground font-mono">{f.slug}</div>
                 </td>
                 <td className="p-3 hidden sm:table-cell capitalize">{f.category_slug}</td>
-                <td className="p-3 font-medium">${Number(f.price).toFixed(2)}</td>
+                <td className="p-3 font-medium">{Number(f.price).toFixed(2)} NIS</td>
                 <td className="p-3 hidden md:table-cell">
                   <div className="flex gap-1">
                     {f.is_available ? (

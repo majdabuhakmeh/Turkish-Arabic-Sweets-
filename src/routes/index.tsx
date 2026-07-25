@@ -6,6 +6,7 @@ import kunafaTrayImg from "@/assets/كنافة نابلسية.jpg";
 import baklavaTrayImg from "@/assets/baqlwa.jpg";
 import kellajTrayImg from "@/assets/kolaj.jpg";
 import { foods, categories, localizedCategoryName, localizedFood } from "@/lib/foods";
+import { formatPrice } from "@/lib/currency";
 import { useI18n, useT } from "@/context/i18n";
 import { useCart } from "@/context/cart";
 import { NearestBranchBanner } from "@/components/NearestBranchBanner";
@@ -319,7 +320,7 @@ function Home() {
                   <h3 className="font-display text-xl text-background">{l.name}</h3>
                   <p className="mt-1 text-xs text-background/80 line-clamp-1">{l.tagline}</p>
                   <div className="mt-3 flex items-center justify-between">
-                    <span className="font-display text-lg text-background">${f.price}</span>
+                    <span className="font-display text-lg text-background">{formatPrice(f.price, locale)}</span>
                     <button
                       onClick={(e) => {
                         e.preventDefault();

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Star, Clock, Plus, Heart } from "lucide-react";
 import { localizedFood, type Food } from "@/lib/foods";
+import { formatPrice } from "@/lib/currency";
 import { useCart } from "@/context/cart";
 import { useI18n, useT } from "@/context/i18n";
 import { useFavorites } from "@/context/favorites";
@@ -35,7 +36,7 @@ export function FoodCard({ food }: { food: Food }) {
           />
           {food.originalPrice && (
             <div className="absolute top-4 left-4 rounded-full bg-destructive text-destructive-foreground text-[11px] font-semibold tracking-wider uppercase px-3 py-1">
-              {t("card.save")} ${food.originalPrice - food.price}
+              {t("card.save")} {formatPrice(food.originalPrice - food.price, locale)}
             </div>
           )}
           {!available && (
@@ -55,11 +56,11 @@ export function FoodCard({ food }: { food: Food }) {
             <h3 className="font-display text-2xl leading-tight line-clamp-2">{l.name}</h3>
             <div className="text-right">
               {discounted ? (
-                <div className="text-xs text-muted-foreground line-through">${food.price}</div>
+                <div className="text-xs text-muted-foreground line-through">{formatPrice(food.price, locale)}</div>
               ) : food.originalPrice ? (
-                <div className="text-xs text-muted-foreground line-through">${food.originalPrice}</div>
+                <div className="text-xs text-muted-foreground line-through">{formatPrice(food.originalPrice, locale)}</div>
               ) : null}
-              <div className="font-display text-2xl text-primary">${price}</div>
+              <div className="font-display text-2xl text-primary">{formatPrice(price, locale)}</div>
             </div>
           </div>
           <p className="text-sm text-muted-foreground mt-1.5 line-clamp-1">{l.tagline}</p>

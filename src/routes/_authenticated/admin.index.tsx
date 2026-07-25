@@ -65,7 +65,7 @@ function Dashboard() {
               <li key={o.id} className="flex justify-between text-sm">
                 <span className="font-mono text-xs">#{o.id.slice(0, 8)}</span>
                 <span className="capitalize text-muted-foreground">{o.status.replace(/_/g, " ")}</span>
-                <span className="font-medium">${Number(o.total).toFixed(2)}</span>
+                <span className="font-medium">{Number(o.total).toFixed(2)} NIS</span>
               </li>
             ))}
             {data.recent.length === 0 && <li className="text-muted-foreground text-sm">No orders yet.</li>}
