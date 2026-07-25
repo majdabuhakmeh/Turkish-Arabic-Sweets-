@@ -206,7 +206,7 @@ function Home() {
       </section>
 
       {/* NEAREST BRANCH / ETA */}
-      <section className="mx-auto max-w-7xl px-6 -mt-6">
+      <section className="mx-auto max-w-7xl px-6 mt-10">
         <NearestBranchBanner />
       </section>
 
@@ -336,6 +336,14 @@ function Home() {
               </Link>
             );
           })}
+        </div>
+        <div className="mt-10 flex justify-center">
+          <Link
+            to="/menu"
+            className="inline-flex items-center justify-center rounded-full border border-primary px-8 h-12 text-sm font-medium text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
+            {t("home.viewMore")}
+          </Link>
         </div>
       </section>
 
