@@ -253,20 +253,29 @@ function Home() {
             {t("home.featuredA")} <em className="text-primary not-italic">{t("home.featuredB")}</em> {t("home.featuredC")}
           </h2>
         </div>
-        <div className="relative grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="relative grid sm:grid-cols-2 lg:grid-cols-3 gap-6 [perspective:1400px]">
           {trays.map((tray) => (
             <Link
               key={tray.key}
               to="/food/$id"
               params={{ id: tray.foodId }}
               onMouseEnter={() => setHoveredTray(tray.key)}
-              onMouseLeave={() => setHoveredTray(null)}
-              className="group relative block aspect-[4/3] overflow-hidden rounded-3xl shadow-soft"
+              onMouseLeave={(e) => {
+                setHoveredTray(null);
+                e.currentTarget.style.transform = "";
+              }}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const px = (e.clientX - rect.left) / rect.width - 0.5;
+                const py = (e.clientY - rect.top) / rect.height - 0.5;
+                e.currentTarget.style.transform = `rotateX(${py * -14}deg) rotateY(${px * 16}deg) translateZ(20px) scale(1.02)`;
+              }}
+              className="group relative block aspect-[4/3] overflow-hidden rounded-3xl shadow-soft transition-transform duration-300 ease-out will-change-transform [transform-style:preserve-3d]"
             >
               <img
                 src={tray.image}
                 alt={tray.name}
-                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <div className="absolute inset-x-0 bottom-0 translate-y-4 p-5 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">

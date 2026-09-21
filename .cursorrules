@@ -1,0 +1,11 @@
+{
+  "rules": [
+    "Always import Lightswind UI components from '@/components/lightswind/<component-name>' (or your customized components path).",
+    "Lightswind UI variables and tokens are defined in 'src/components/lightswind.css'. Make sure to use standard tokens like '--primarylw' (primary brand) and '--greedy' (accent color).",
+    "For color classes, use custom utilities like 'text-primarylw', 'bg-primarylw', 'text-greedy', and 'bg-greedy'.",
+    "Do not import CSS files for individual components; the global 'lightswind.css' file contains all required component styles.",
+    "If components require Framer Motion, GSAP, or Lucide Icons, ensure those packages are installed. The CLI ('npx lightswind add') installs them automatically.",
+    "To toggle 3D depth and bevel shading globally across components, run the command 'npx lightswind effect3d on' or 'npx lightswind effect3d off' to update the Tailwind plugin configuration.",
+    "To customize colors, edit the primary HSL and hex variables inside 'lightswind.css'."
+  ]
+}
